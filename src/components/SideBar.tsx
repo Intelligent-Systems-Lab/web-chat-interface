@@ -1,8 +1,9 @@
-import { Drawer, List, ListItem, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Button } from '@mui/material';
+import { Drawer, List, ListItem, Box, IconButton } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu'; // 引入 MenuIcon
 import DeleteIcon from '@mui/icons-material/Delete'; // 引入刪除圖示
 import EditIcon from '@mui/icons-material/Edit'; // 引入編輯圖示
 import SessionItem from './SessionItem';
+import DeleteSession from './DeleteSession'; // 引入刪除對話的組件
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import { useState, useEffect } from 'react';
 
@@ -201,23 +202,11 @@ function Sidebar({ activeSessionId, onSelectSession, isOpen, onToggleSidebar }: 
         </List>
       </Drawer>
       {/* 確認刪除的 Dialog */}
-      <Dialog
-        open={isDialogOpen}
+      <DeleteSession
+        isOpen={isDialogOpen}
         onClose={cancelDeleteSession}
-      >
-        <DialogTitle>刪除確認</DialogTitle>
-        <DialogContent>
-          <DialogContentText>你確定要刪除這個對話嗎？</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={cancelDeleteSession} color="primary">
-            取消
-          </Button>
-          <Button onClick={confirmDeleteSession} color="error">
-            確定
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onConfirm={confirmDeleteSession}
+      />
 
       {/* 主畫面上的按鈕 */}
       {!isOpen && (
