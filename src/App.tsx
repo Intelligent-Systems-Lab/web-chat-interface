@@ -6,9 +6,24 @@ import { Box } from '@mui/material';
 function ChatPage() {
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(true);
+  const [sessionMessages, setSessionMessages] = useState<Record<string, { id: number; sender: string; text: string }[]>>({});
+
   const handleToggleSidebar = () => {
     setIsOpen(!isOpen);
   };
+
+  const handleSendMessage = (message: string) => {
+    if (!activeSessionId) return;
+
+    setSessionMessages((prevMessages) => ({
+      ...prevMessages,
+      [activeSessionId]: [
+        ...(prevMessages[activeSessionId] || []),
+        { id: (prevMessages[activeSessionId]?.length || 0) + 1, sender: 'user', text: message },
+      ],
+    }));
+  };
+
   const sidebarWidth = isOpen ? 300 : 0; // Drawer 寬度
 
   return (
@@ -26,7 +41,11 @@ function ChatPage() {
         />
       </Box>
       <Box flex="1" sx={{ transition: 'margin-left 0.3s', border: 'none' }}> {/* ChatWindow 動態調整 */}
-        <ChatWindow sessionId={activeSessionId} />
+        <ChatWindow
+          sessionId={activeSessionId}
+          messages={activeSessionId ? sessionMessages[activeSessionId] || [] : []}
+          onSendMessage={handleSendMessage}
+        />
       </Box>
     </Box>
   );

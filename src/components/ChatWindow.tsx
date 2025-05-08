@@ -3,13 +3,13 @@ import ChatInput from './ChatInput';
 
 interface ChatWindowProps {
   sessionId: string | null;
+  messages: { id: number; sender: string; text: string }[];
+  onSendMessage: (message: string) => void;
 }
 
-function ChatWindow({ sessionId }: ChatWindowProps) {
-  const handleSendMessage = (message: string) => {
-    console.log('訊息已發送:', message); // 處理發送訊息的邏輯
-  };
+const marginPercent = '20%'
 
+function ChatWindow({ sessionId, messages, onSendMessage }: ChatWindowProps) {
   return (
     <Box
       display="flex"
@@ -23,14 +23,40 @@ function ChatWindow({ sessionId }: ChatWindowProps) {
       {/* Chat content area */}
       <Box flex="1" p={2} overflow="auto">
         {sessionId ? (
-          <Typography>顯示對話內容（Session: {sessionId}）</Typography>
+          messages.map((msg) => (
+            <Box
+              key={msg.id}
+              display="flex"
+              justifyContent={msg.sender === 'user' ? 'flex-end' : 'flex-start'}
+              mb={2}
+            >
+              <Box
+                bgcolor={msg.sender === 'user' ? '#4caf50' : '#616161'}
+                color="white"
+                px={2}
+                py={1}
+                borderRadius="8px"
+                maxWidth="50%"
+                alignSelf={msg.sender === 'user' ? 'flex-end' : 'flex-start'}
+                marginLeft={msg.sender === 'user' ? 'auto' : marginPercent}
+                marginRight={msg.sender === 'user' ? marginPercent : 'auto'}
+                sx={{
+                  wordWrap: 'break-word',
+                  overflowWrap: 'break-word',
+                  whiteSpace: 'pre-wrap',
+                }}
+              >
+                <Typography variant="body1">{msg.text}</Typography>
+              </Box>
+            </Box>
+          ))
         ) : (
           <Typography color="gray">請選擇一個對話</Typography>
         )}
       </Box>
 
       {/* Chat input area */}
-      <ChatInput onSendMessage={handleSendMessage} />
+      <ChatInput onSendMessage={onSendMessage} />
     </Box>
   );
 }
