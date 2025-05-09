@@ -36,7 +36,7 @@ function ChatWindow({ sessionId, messages, onSendMessage }: ChatWindowProps) {
                 px={2}
                 py={1}
                 borderRadius="8px"
-                maxWidth="50%"
+                maxWidth="35%"
                 alignSelf={msg.sender === 'user' ? 'flex-end' : 'flex-start'}
                 marginLeft={msg.sender === 'user' ? 'auto' : marginPercent}
                 marginRight={msg.sender === 'user' ? marginPercent : 'auto'}

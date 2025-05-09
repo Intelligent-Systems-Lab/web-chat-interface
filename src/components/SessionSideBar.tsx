@@ -16,7 +16,7 @@ interface SidebarProps {
     onToggleSidebar: () => void; // 用來控制 Sidebar 開關
 }
 
-function Sidebar({ activeSessionId, onSelectSession, isOpen, onToggleSidebar }: SidebarProps) {
+function SessionSidebar({ activeSessionId, onSelectSession, isOpen, onToggleSidebar }: SidebarProps) {
   const [chatSessions, setSessions] = useState<{ id: string; title: string }[]>([]);
   const [editingSessionId, setEditingSessionId] = useState<string | null>(null); // 用來追蹤正在編輯的 session
   const [newTitle, setNewTitle] = useState<string>(''); // 用來暫存新的標題
@@ -232,4 +232,4 @@ function Sidebar({ activeSessionId, onSelectSession, isOpen, onToggleSidebar }: 
   );
 }
 
-export default Sidebar;
+export default SessionSidebar;

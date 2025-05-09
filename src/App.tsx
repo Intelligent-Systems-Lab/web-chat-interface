@@ -1,15 +1,21 @@
 import { useState } from 'react';
-import Sidebar from './components/SideBar';
+import SessionSidebar from './components/SessionSideBar';
+import SessionSetting from './components/SessionSetting';
 import ChatWindow from './components/ChatWindow';
 import { Box } from '@mui/material';
 
 function ChatPage() {
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
-  const [isOpen, setIsOpen] = useState(true);
+  const [sessionIsOpen, setSessionIsOpen] = useState(true);
   const [sessionMessages, setSessionMessages] = useState<Record<string, { id: number; sender: string; text: string }[]>>({});
+  const [sessionSettingIsOpen, setSettingSessionIsOpen] = useState(true);
 
-  const handleToggleSidebar = () => {
-    setIsOpen(!isOpen);
+  const handleSessionSidebar = () => {
+    setSessionIsOpen(!sessionIsOpen);
+  };
+
+  const handleSessionSetting = () => {
+    setSettingSessionIsOpen(!sessionSettingIsOpen);
   };
 
   const handleSendMessage = (message: string) => {
@@ -22,31 +28,62 @@ function ChatPage() {
         { id: (prevMessages[activeSessionId]?.length || 0) + 1, sender: 'user', text: message },
       ],
     }));
+
+    // 模擬機器人回應
+    setTimeout(() => {
+      setSessionMessages((prevMessages) => ({
+        ...prevMessages,
+        [activeSessionId]: [
+          ...(prevMessages[activeSessionId] || []),
+          { id: (prevMessages[activeSessionId]?.length || 0) + 1, sender: 'bot', text: '請調整右上方設定後再開始對話' },
+        ],
+      }));
+    }, 200); // 延遲 0.2 秒
   };
 
-  const sidebarWidth = isOpen ? 300 : 0; // Drawer 寬度
+  const sidebarWidth = sessionIsOpen ? 300 : 0;
+  const settingWidth = sessionSettingIsOpen ? 300 : 0;
 
   return (
     <Box display="flex" height="100vh">
       <Box
         width={sidebarWidth}
-        bgcolor="gray"
+        bgcolor='#212121'
         sx={{ transition: 'width 0.3s' }} // 平滑過渡效果
       >
-        <Sidebar
+        <SessionSidebar
           activeSessionId={activeSessionId}
           onSelectSession={setActiveSessionId}
-          isOpen={isOpen}
-          onToggleSidebar={handleToggleSidebar} // 傳遞控制函式
+          isOpen={sessionIsOpen}
+          onToggleSidebar={handleSessionSidebar} // 傳遞控制函式
         />
       </Box>
-      <Box flex="1" sx={{ transition: 'margin-left 0.3s', border: 'none' }}> {/* ChatWindow 動態調整 */}
+
+      <Box 
+        flex="1" 
+        sx={{ 
+          transition: 'margin 0.3s', 
+          border: 'none',
+        }}
+      > 
         <ChatWindow
           sessionId={activeSessionId}
           messages={activeSessionId ? sessionMessages[activeSessionId] || [] : []}
           onSendMessage={handleSendMessage}
         />
       </Box>
+
+      <Box
+        width={settingWidth}
+        bgcolor='#212121'
+        sx={{ transition: 'width 0.3s' }} // 平滑過渡效果
+      >
+        <SessionSetting
+          isOpen={sessionSettingIsOpen}
+          onToggleSidebar={handleSessionSetting} // 傳遞控制函式
+        />
+      </Box>
+
     </Box>
   );
 }
