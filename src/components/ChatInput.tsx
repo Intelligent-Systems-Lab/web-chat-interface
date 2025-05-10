@@ -4,14 +4,20 @@ import { useState } from 'react';
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
+  mode: string; // 新增 mode 屬性
 }
 
-function ChatInput({ onSendMessage }: ChatInputProps) {
+function ChatInput({ onSendMessage, mode }: ChatInputProps) {
   const [message, setMessage] = useState('');
 
   const handleSendMessage = () => {
     if (message.trim()) {
-      onSendMessage(message); // 呼叫父元件的發送訊息函式
+      if (mode === 'manual') {
+        console.log('Manual mode: Message not sent to server.');
+        onSendMessage(message);
+      } else {
+        onSendMessage(message); // 呼叫父元件的發送訊息函式
+      }
       setMessage(''); // 清空輸入框
     }
   };

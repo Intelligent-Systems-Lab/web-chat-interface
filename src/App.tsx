@@ -9,6 +9,7 @@ function ChatPage() {
   const [sessionIsOpen, setSessionIsOpen] = useState(true);
   const [sessionMessages, setSessionMessages] = useState<Record<string, { id: number; sender: string; text: string }[]>>({});
   const [sessionSettingIsOpen, setSettingSessionIsOpen] = useState(true);
+  const [sessionModes, setSessionModes] = useState<Record<string, string>>({}); // 新增狀態來保存每個 session 的 mode
 
   const handleSessionSidebar = () => {
     setSessionIsOpen(!sessionIsOpen);
@@ -19,7 +20,7 @@ function ChatPage() {
   };
 
   const handleSendMessage = (message: string) => {
-    if (!activeSessionId) return;
+  if (!activeSessionId) return;
 
     setSessionMessages((prevMessages) => ({
       ...prevMessages,
@@ -30,19 +31,31 @@ function ChatPage() {
     }));
 
     // 模擬機器人回應
+    const currentMode = sessionModes[activeSessionId] || 'openai'; // 獲取當前 session 的 mode
+    const botResponse = currentMode === 'openai' ? 'OpenAI 模式' : 'Manual 模式';
+
     setTimeout(() => {
       setSessionMessages((prevMessages) => ({
         ...prevMessages,
         [activeSessionId]: [
           ...(prevMessages[activeSessionId] || []),
-          { id: (prevMessages[activeSessionId]?.length || 0) + 1, sender: 'bot', text: '請調整右上方設定後再開始對話' },
+          { id: (prevMessages[activeSessionId]?.length || 0) + 1, sender: 'bot', text: botResponse },
         ],
       }));
     }, 200); // 延遲 0.2 秒
   };
 
+  const handleModeChange = (mode: string) => {
+    if (!activeSessionId) return;
+
+    setSessionModes((prevModes) => ({
+      ...prevModes,
+      [activeSessionId]: mode,
+    }));
+  };
+
   const sidebarWidth = sessionIsOpen ? 300 : 0;
-  const settingWidth = sessionSettingIsOpen ? 300 : 0;
+  const settingWidth = sessionSettingIsOpen ? 500 : 0;
 
   return (
     <Box display="flex" height="100vh">
@@ -70,6 +83,7 @@ function ChatPage() {
           sessionId={activeSessionId}
           messages={activeSessionId ? sessionMessages[activeSessionId] || [] : []}
           onSendMessage={handleSendMessage}
+          mode={activeSessionId ? sessionModes[activeSessionId] || 'openai' : 'openai'} // 傳遞 mode
         />
       </Box>
 
@@ -81,6 +95,8 @@ function ChatPage() {
         <SessionSetting
           isOpen={sessionSettingIsOpen}
           onToggleSidebar={handleSessionSetting} // 傳遞控制函式
+          mode={activeSessionId ? sessionModes[activeSessionId] || 'openai' : 'openai'} // 傳遞當前 session 的 mode
+          onModeChange={handleModeChange} // 傳遞 mode 更新函式
         />
       </Box>
 

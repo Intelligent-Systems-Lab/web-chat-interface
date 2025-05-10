@@ -1,15 +1,16 @@
 import { Box, Typography } from '@mui/material';
 import ChatInput from './ChatInput';
 
+const marginPercent = '20%'
+
 interface ChatWindowProps {
   sessionId: string | null;
   messages: { id: number; sender: string; text: string }[];
   onSendMessage: (message: string) => void;
+  mode: string; // 新增 mode 屬性
 }
 
-const marginPercent = '20%'
-
-function ChatWindow({ sessionId, messages, onSendMessage }: ChatWindowProps) {
+function ChatWindow({ sessionId, messages, onSendMessage, mode }: ChatWindowProps) {
   return (
     <Box
       display="flex"
@@ -20,7 +21,6 @@ function ChatWindow({ sessionId, messages, onSendMessage }: ChatWindowProps) {
       height="100%"
       width="100%"
     >
-      {/* Chat content area */}
       <Box flex="1" p={2} overflow="auto">
         {sessionId ? (
           messages.map((msg) => (
@@ -55,8 +55,7 @@ function ChatWindow({ sessionId, messages, onSendMessage }: ChatWindowProps) {
         )}
       </Box>
 
-      {/* Chat input area */}
-      <ChatInput onSendMessage={onSendMessage} />
+      <ChatInput onSendMessage={onSendMessage} mode={mode} /> {/* 傳遞 mode */}
     </Box>
   );
 }

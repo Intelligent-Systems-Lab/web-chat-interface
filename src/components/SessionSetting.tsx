@@ -1,31 +1,38 @@
-import { Drawer, List, Box, IconButton } from '@mui/material';
+import { Drawer, List, Box, IconButton, Button } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
+import BotModeSelector from './session_setting/BotModeSelect';
+import ModeContent from './session_setting/ModeContent';
 
-const drawerWidth = 300;
+const drawerWidth = 500;
 
 interface SettingProps {
-    isOpen: boolean; // 新增 isOpen 作為 props
-    onToggleSidebar: () => void; // 用來控制 Sidebar 開關
+  isOpen: boolean;
+  onToggleSidebar: () => void;
+  mode: string; // 接收當前 session 的 mode
+  onModeChange: (mode: string) => void; // 更新 mode 的函式
 }
 
-function SessionSetting({ isOpen, onToggleSidebar }: SettingProps) {
-
+function SessionSetting({ isOpen, onToggleSidebar, mode, onModeChange }: SettingProps) {
+  const handleSaveSettings = () => {
+    console.log('保存設定:', mode); // 這裡可以替換為實際的保存邏輯
+    alert(`設定已保存！當前模式為: ${mode}`);
+  };
+  
   return (
     <>
-      {/* Sidebar */}
       <Drawer
-        variant="persistent" // 使用 persistent 以便控制開關
+        variant="persistent"
         anchor="right"
-        open={isOpen} // 根據 props 控制是否展開
+        open={isOpen}
         sx={{
-          width: drawerWidth, // 固定寬度
+          width: drawerWidth,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
             width: drawerWidth,
             boxSizing: 'border-box',
             backgroundColor: '#393B3B',
-            transition: 'transform 0.5s ease', // 調整滑動動畫的持續時間
-            transform: isOpen ? 'translateX(0)' : `translateX(-${drawerWidth}px)`, // 控制滑動
+            transition: 'transform 0.5s ease',
+            transform: isOpen ? 'translateX(0)' : `translateX(-${drawerWidth}px)`,
           },
         }}
       >
@@ -39,35 +46,62 @@ function SessionSetting({ isOpen, onToggleSidebar }: SettingProps) {
             padding: '0 8px',
           }}
         >
-          <IconButton 
-            onClick={onToggleSidebar} 
-            disableRipple 
-            sx={{ 
-              color: '#FFFFFF', 
-              borderRadius: '8px', 
-              '&:hover': {backgroundColor: '#505252',}, 
-            }}>
-            <SettingsIcon/>
+          <IconButton
+            onClick={onToggleSidebar}
+            disableRipple
+            sx={{
+              color: '#FFFFFF',
+              borderRadius: '8px',
+              '&:hover': { backgroundColor: '#505252' },
+            }}
+          >
+            <SettingsIcon />
           </IconButton>
-
         </Box>
-
-        <List>
-        </List>
-
+        <Box
+          sx={{
+            padding: '16px',
+            borderBottom: '0.5px solid #737576',
+          }}
+        >
+          <BotModeSelector onModeChange={onModeChange} />
+        </Box>
+        <ModeContent mode={mode} />
+        <Box
+          sx={{
+            padding: '16px',
+            display: 'flex',
+            justifyContent: 'center',
+            borderTop: '0.5px solid #737576',
+          }}
+        >
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSaveSettings}
+            sx={{
+              backgroundColor: '#505252',
+              '&:hover': {
+                backgroundColor: '#737576',
+              },
+            }}
+          >
+            保存設定
+          </Button>
+        </Box>
+        <List></List>
       </Drawer>
-      {/* 主畫面上的按鈕 */}
       {!isOpen && (
         <IconButton
           onClick={onToggleSidebar}
-          disableRipple 
+          disableRipple
           sx={{
-            position: 'fixed', // 固定位置
-            top: '16px', // 距離頂部 16px
-            right: '16px', // 距離左側 16px
+            position: 'fixed',
+            top: '16px',
+            right: '16px',
             color: '#FFFFFF',
             backgroundColor: '#393B3B',
-            borderRadius: '8px', 
+            borderRadius: '8px',
             '&:hover': {
               backgroundColor: '#505252',
             },
