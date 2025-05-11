@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
-import OpenAIModeContent from './OpenAIModeContent';
-import ManualModeContent from './ManualModeContent';
+import OpenAIModeContent from './session_mode/OpenAIModeContent';
+import ManualModeContent from './session_mode/ManualModeContent';
 
 interface ModeContentProps {
   mode: string;
