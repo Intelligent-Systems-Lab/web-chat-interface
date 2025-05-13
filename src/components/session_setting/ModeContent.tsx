@@ -4,13 +4,15 @@ import ManualModeContent from './session_mode/ManualModeContent';
 
 interface ModeContentProps {
   mode: string;
+  onParamsChange: (params: Record<string, any>) => void;
+  params: Record<string, any>;
 }
 
-function ModeContent({ mode }: ModeContentProps) {
+function ModeContent({ mode, onParamsChange, params }: ModeContentProps) {
   const renderContent = () => {
     switch (mode) {
       case 'openai':
-        return <OpenAIModeContent />;
+        return <OpenAIModeContent onParamsChange={onParamsChange} params={params}/>;
       case 'manual':
         return <ManualModeContent />;
       default:

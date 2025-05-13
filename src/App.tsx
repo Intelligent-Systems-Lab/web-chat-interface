@@ -10,6 +10,7 @@ function ChatPage() {
   const [sessionMessages, setSessionMessages] = useState<Record<string, { id: number; sender: string; text: string }[]>>({});
   const [sessionSettingIsOpen, setSettingSessionIsOpen] = useState(true);
   const [sessionModes, setSessionModes] = useState<Record<string, string>>({}); // 新增狀態來保存每個 session 的 mode
+  const [sessionParams, setSessionParams] = useState<Record<string, Record<string, any>>>({}); // 新增狀態來保存參數
 
   const handleSessionSidebar = () => {
     setSessionIsOpen(!sessionIsOpen);
@@ -32,7 +33,8 @@ function ChatPage() {
 
     // 模擬機器人回應
     const currentMode = sessionModes[activeSessionId] || 'openai'; // 獲取當前 session 的 mode
-    const botResponse = currentMode === 'openai' ? 'OpenAI 模式' : 'Manual 模式';
+    const currentParams = sessionParams[activeSessionId] || {};
+    const botResponse = `模式: ${currentMode}, 參數: ${JSON.stringify(currentParams)}`;
 
     setTimeout(() => {
       setSessionMessages((prevMessages) => ({
@@ -51,6 +53,15 @@ function ChatPage() {
     setSessionModes((prevModes) => ({
       ...prevModes,
       [activeSessionId]: mode,
+    }));
+  };
+
+  const handleParamsChange = (params: Record<string, any>) => {
+    if (!activeSessionId) return;
+
+    setSessionParams((prevParams) => ({
+      ...prevParams,
+      [activeSessionId]: params,
     }));
   };
 
@@ -97,6 +108,8 @@ function ChatPage() {
           onToggleSidebar={handleSessionSetting} // 傳遞控制函式
           mode={activeSessionId ? sessionModes[activeSessionId] || 'openai' : 'openai'} // 傳遞當前 session 的 mode
           onModeChange={handleModeChange} // 傳遞 mode 更新函式
+          onParamsChange={handleParamsChange} // 傳遞參數更新函式
+          params={activeSessionId ? sessionParams[activeSessionId] || {} : {}} // 傳遞當前參數
         />
       </Box>
 

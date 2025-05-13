@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Drawer, List, Box, IconButton, Button } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import BotModeSelector from './session_setting/BotModeSelect';
@@ -10,12 +11,25 @@ interface SettingProps {
   onToggleSidebar: () => void;
   mode: string; // 接收當前 session 的 mode
   onModeChange: (mode: string) => void; // 更新 mode 的函式
+  onParamsChange: (params: Record<string, any>) => void; // 新增參數更新函式
+  params: Record<string, any>; // 接收當前參數
 }
 
-function SessionSetting({ isOpen, onToggleSidebar, mode, onModeChange }: SettingProps) {
+function SessionSetting({ isOpen, onToggleSidebar, mode, onModeChange, onParamsChange, params }: SettingProps) {
+  
+  const [localMode, setLocalMode] = useState<string>(mode);
+  const [localParams, setLocalParams] = useState<Record<string, any>>(params);
+
+  // 當父元件的 mode 或 params 改變時，同步更新本地狀態
+  useEffect(() => {
+    setLocalMode(mode);
+    setLocalParams(params);
+  }, [mode, params]);
+  
   const handleSaveSettings = () => {
-    console.log('保存設定:', mode); // 這裡可以替換為實際的保存邏輯
-    alert(`設定已保存！當前模式為: ${mode}`);
+    onModeChange(localMode);
+    onParamsChange(localParams);
+    alert(`設定已保存！當前模式為: ${localMode}`);
   };
   
   return (
@@ -64,9 +78,14 @@ function SessionSetting({ isOpen, onToggleSidebar, mode, onModeChange }: Setting
             borderBottom: '0.5px solid #737576',
           }}
         >
-          <BotModeSelector onModeChange={onModeChange} />
+          {/* 傳遞本地狀態的更新函式 */}
+          <BotModeSelector onModeChange={setLocalMode} mode={localMode} />
         </Box>
-        <ModeContent mode={mode} />
+        <ModeContent
+          mode={localMode}
+          onParamsChange={setLocalParams} // 傳遞本地狀態的更新函式
+          params={localParams}
+        />
         <Box
           sx={{
             padding: '16px',

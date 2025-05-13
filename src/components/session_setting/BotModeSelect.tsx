@@ -1,16 +1,13 @@
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
-import { useState } from 'react';
 
 interface BotModeSelectorProps {
+  mode: string;
   onModeChange: (mode: string) => void;
 }
 
-function BotModeSelector({ onModeChange }: BotModeSelectorProps) {
-  const [botMode, setBotMode] = useState('openai');
-
+function BotModeSelector({ mode, onModeChange }: BotModeSelectorProps) {
   const handleModeChange = (event: SelectChangeEvent<string>) => {
     const newMode = event.target.value;
-    setBotMode(newMode);
     onModeChange(newMode);
   };
 
@@ -25,7 +22,7 @@ function BotModeSelector({ onModeChange }: BotModeSelectorProps) {
       <FormControl fullWidth>
         <InputLabel sx={{ color: '#FFFFFF' }}>模式</InputLabel>
         <Select
-          value={botMode}
+          value={mode}
           onChange={handleModeChange}
           sx={{
             color: '#FFFFFF',
