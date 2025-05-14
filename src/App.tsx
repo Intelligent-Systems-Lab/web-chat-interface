@@ -2,6 +2,7 @@ import { useState } from 'react';
 import SessionSidebar from './components/SessionSideBar';
 import SessionSetting from './components/SessionSetting';
 import ChatWindow from './components/ChatWindow';
+import { sendMessage } from './utils/sendMessage';
 import { Box } from '@mui/material';
 
 function ChatPage() {
@@ -20,7 +21,7 @@ function ChatPage() {
     setSettingSessionIsOpen(!sessionSettingIsOpen);
   };
 
-  const handleSendMessage = (message: string) => {
+  const handleSendMessage = async (message: string) => {
   if (!activeSessionId) return;
 
     setSessionMessages((prevMessages) => ({
@@ -34,17 +35,19 @@ function ChatPage() {
     // 模擬機器人回應
     const currentMode = sessionModes[activeSessionId] || 'openai'; // 獲取當前 session 的 mode
     const currentParams = sessionParams[activeSessionId] || {};
-    const botResponse = `模式: ${currentMode}, 參數: ${JSON.stringify(currentParams)}`;
+    const botResponse = await sendMessage({
+      mode: currentMode,
+      params: currentParams,
+      message,
+    });
 
-    setTimeout(() => {
-      setSessionMessages((prevMessages) => ({
-        ...prevMessages,
-        [activeSessionId]: [
-          ...(prevMessages[activeSessionId] || []),
-          { id: (prevMessages[activeSessionId]?.length || 0) + 1, sender: 'bot', text: botResponse },
-        ],
-      }));
-    }, 200); // 延遲 0.2 秒
+    setSessionMessages((prevMessages) => ({
+      ...prevMessages,
+      [activeSessionId]: [
+        ...(prevMessages[activeSessionId] || []),
+        { id: (prevMessages[activeSessionId]?.length || 0) + 1, sender: 'bot', text: botResponse },
+      ],
+    }));
   };
 
   const handleModeChange = (mode: string) => {

@@ -14,7 +14,7 @@ function ModeContent({ mode, onParamsChange, params }: ModeContentProps) {
       case 'openai':
         return <OpenAIModeContent onParamsChange={onParamsChange} params={params}/>;
       case 'manual':
-        return <ManualModeContent />;
+        return <ManualModeContent onParamsChange={onParamsChange} params={params}/>;
       default:
         return (
           <Box sx={{ color: '#FFFFFF' }}>

@@ -7,28 +7,30 @@ interface OpenAIModeContentProps {
 }
 
 function OpenAIModeContent({ onParamsChange, params }: OpenAIModeContentProps) {
-  const [temperature, setTemperature] = useState(params.temperature || 0.7);
+  const [apiKey, setApiKey] = useState(params.apiKey || '');
 
   useEffect(() => {
-    onParamsChange({ ...params, temperature });
-  }, [temperature]);
+    onParamsChange({ ...params, apiKey });
+  }, [apiKey]);
 
   return (
     <Box>
       <Typography sx={{ color: '#FFFFFF', marginBottom: '8px' }}>
-        OpenAI 模式的內容
+        請輸入 OpenAI API 金鑰
       </Typography>
       <TextField
-        label="Temperature"
-        type="number"
-        value={temperature}
-        onChange={(e) => setTemperature(parseFloat(e.target.value))}
+        label="OpenAI API Key"
+        type="password"
+        value={apiKey}
+        onChange={(e) => setApiKey(e.target.value)}
         sx={{
           color: '#FFFFFF',
           '.MuiInputBase-input': { color: '#FFFFFF' },
           '.MuiInputLabel-root': { color: '#FFFFFF' },
           '.MuiOutlinedInput-notchedOutline': { borderColor: '#737576' },
         }}
+        fullWidth
+        autoComplete="off"
       />
     </Box>
   );
