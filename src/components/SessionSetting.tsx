@@ -4,7 +4,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import BotModeSelector from './session_setting/BotModeSelect';
 import ModeContent from './session_setting/ModeContent';
 
-const drawerWidth = 500;
+export const sessionSettingWidth = 800;
 
 interface SettingProps {
   isOpen: boolean;
@@ -39,14 +39,14 @@ function SessionSetting({ isOpen, onToggleSidebar, mode, onModeChange, onParamsC
         anchor="right"
         open={isOpen}
         sx={{
-          width: drawerWidth,
+          width: sessionSettingWidth,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: drawerWidth,
+            width: sessionSettingWidth,
             boxSizing: 'border-box',
             backgroundColor: '#393B3B',
             transition: 'transform 0.5s ease',
-            transform: isOpen ? 'translateX(0)' : `translateX(-${drawerWidth}px)`,
+            transform: isOpen ? 'translateX(0)' : `translateX(-${sessionSettingWidth}px)`,
           },
         }}
       >

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import SessionSidebar from './components/SessionSideBar';
-import SessionSetting from './components/SessionSetting';
+import SessionSetting, { sessionSettingWidth } from './components/SessionSetting';
 import ChatWindow from './components/ChatWindow';
 import { sendMessage } from './utils/sendMessage';
 import { Box } from '@mui/material';
@@ -15,10 +15,16 @@ function ChatPage() {
 
   const handleSessionSidebar = () => {
     setSessionIsOpen(!sessionIsOpen);
+    if (!sessionIsOpen) {
+      setSettingSessionIsOpen(false);
+    }
   };
 
   const handleSessionSetting = () => {
     setSettingSessionIsOpen(!sessionSettingIsOpen);
+    if (!sessionSettingIsOpen) {
+      setSessionIsOpen(false);
+    }
   };
 
   const handleSendMessage = async (message: string) => {
@@ -32,7 +38,6 @@ function ChatPage() {
       ],
     }));
 
-    // 模擬機器人回應
     const currentMode = sessionModes[activeSessionId] || 'openai'; // 獲取當前 session 的 mode
     const currentParams = sessionParams[activeSessionId] || {};
     const botResponse = await sendMessage({
@@ -69,8 +74,8 @@ function ChatPage() {
   };
 
   const sidebarWidth = sessionIsOpen ? 300 : 0;
-  const settingWidth = sessionSettingIsOpen ? 500 : 0;
-
+  const settingWidth = sessionSettingIsOpen ? sessionSettingWidth : 0;
+  
   return (
     <Box display="flex" height="100vh">
       <Box
