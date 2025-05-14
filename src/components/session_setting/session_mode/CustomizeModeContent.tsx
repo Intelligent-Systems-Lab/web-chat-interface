@@ -1,12 +1,12 @@
 import { Box, Typography, TextField } from '@mui/material';
 import { useState, useEffect } from 'react';
 
-interface ManualModeContentProps {
+interface CustomizeModeContentProps {
   onParamsChange: (params: Record<string, any>) => void;
   params: Record<string, any>;
 }
 
-function ManualModeContent({ onParamsChange, params }: ManualModeContentProps) {
+function CustomizeModeContent({ onParamsChange, params }: CustomizeModeContentProps) {
   const [temperature, setTemperature] = useState(params.temperature || 0.7);
   
   useEffect(() => {
@@ -16,7 +16,7 @@ function ManualModeContent({ onParamsChange, params }: ManualModeContentProps) {
   return (
     <Box>
       <Typography sx={{ color: '#FFFFFF', marginBottom: '8px' }}>
-        Manual 模式的內容
+        Customize 模式的內容
       </Typography>
       <TextField
         label="Temperature"
@@ -34,4 +34,4 @@ function ManualModeContent({ onParamsChange, params }: ManualModeContentProps) {
   );
 }
 
-export default ManualModeContent;
+export default CustomizeModeContent;

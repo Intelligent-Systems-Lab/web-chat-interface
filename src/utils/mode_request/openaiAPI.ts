@@ -12,7 +12,7 @@ export async function sendOpenAIMessage(apiKey: string, message: string): Promis
   });
 
   if (!response.ok) {
-    return `OpenAI API 錯誤: ${response.status}`;
+    return `OpenAI API 錯誤: ${response.status} ${response.statusText}`;
   }
 
   const data = await response.json();
