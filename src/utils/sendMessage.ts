@@ -1,4 +1,5 @@
 import { sendOpenAIMessage } from './mode_request/openaiAPI';
+import { sendCustomizeAPI } from './mode_request/customizeAPI';
 
 type SendMessageParams = {
   mode: string;
@@ -13,15 +14,8 @@ export async function sendMessage({ mode, params, message }: SendMessageParams):
     if (!apiKey) return '缺少 OpenAI API 金鑰';
     return await sendOpenAIMessage(apiKey, message);
 
-  } else if (mode === 'custom') {
-    // 另一種 mode
-    const res = await fetch('/api/custom', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: message, options: params }),
-    });
-    const data = await res.json();
-    return data.result || 'Custom 回應失敗';
+  } else if (mode === 'customize') {
+    return await sendCustomizeAPI(params, message);
   } else {
     // 預設回應
     return `未知模式: ${mode}`;
