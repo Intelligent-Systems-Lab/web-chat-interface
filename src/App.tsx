@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import SessionSidebar from './components/SessionSideBar';
+import SessionSidebar, {sessionSideBarWidth} from './components/SessionSideBar';
 import SessionSetting, { sessionSettingWidth } from './components/SessionSetting';
 import ChatWindow from './components/ChatWindow';
 import { sendMessage } from './utils/sendMessage';
@@ -73,7 +73,7 @@ function ChatPage() {
     }));
   };
 
-  const sidebarWidth = sessionIsOpen ? 300 : 0;
+  const sidebarWidth = sessionIsOpen ? sessionSideBarWidth : 0;
   const settingWidth = sessionSettingIsOpen ? sessionSettingWidth : 0;
   
   return (

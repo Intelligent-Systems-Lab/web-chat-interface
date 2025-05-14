@@ -7,7 +7,7 @@ import DeleteSession from './DeleteSession'; // 引入刪除對話的組件
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import { useState, useEffect } from 'react';
 
-const drawerWidth = 300;
+export const sessionSideBarWidth = 300;
 
 interface SidebarProps {
     activeSessionId: string | null;
@@ -94,14 +94,14 @@ function SessionSidebar({ activeSessionId, onSelectSession, isOpen, onToggleSide
         anchor="left"
         open={isOpen} // 根據 props 控制是否展開
         sx={{
-          width: drawerWidth, // 固定寬度
+          width: sessionSideBarWidth, // 固定寬度
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: drawerWidth,
+            width: sessionSideBarWidth,
             boxSizing: 'border-box',
             backgroundColor: '#393B3B',
             transition: 'transform 0.5s ease', // 調整滑動動畫的持續時間
-            transform: isOpen ? 'translateX(0)' : `translateX(-${drawerWidth}px)`, // 控制滑動
+            transform: isOpen ? 'translateX(0)' : `translateX(-${sessionSideBarWidth}px)`, // 控制滑動
           },
         }}
       >
