@@ -17,27 +17,48 @@ function CustomizeModeContent({ onParamsChange, params }: CustomizeModeContentPr
   const [method, setMethod] = useState(params.method || 'GET');
   const [url, setUrl] = useState(params.url || '');
   const [apiKey, setApiKey] = useState(params.apiKey || '');
-  const [customBody, setCustomBody] = useState<KeyValue[]>(
-    params.customBody
-      ? Object.entries(params.customBody).map(([key, value]) => ({ key, value: String(value) }))
+  const [queryParams, setQueryParams] = useState<KeyValue[]>(
+    params.query_params
+      ? Object.entries(params.query_params).map(([key, value]) => ({ key, value: String(value) }))
       : [{ key: '', value: '' }]
   );
+  const [customBody, setCustomBody] = useState<KeyValue[]>(
+    params.body
+      ? Object.entries(params.body).map(([key, value]) => ({ key, value: String(value) }))
+      : [{ key: '', value: '' }]
+  );
+  const [responseFields, setResponseFields] = useState<string[]>(params.responseFields || ['']);
 
   useEffect(() => {
-    // 將 customBody 陣列轉成物件
+    // 將 queryParams 和 customBody 陣列轉成物件
+    const queryParamsObj = queryParams.reduce((acc, { key, value }) => {
+      if (key) acc[key] = value;
+      return acc;
+    }, {} as Record<string, string>);
+
     const bodyObj = customBody.reduce((acc, { key, value }) => {
       if (key) acc[key] = value;
       return acc;
     }, {} as Record<string, string>);
+
+    const filteredResponseFields = responseFields.filter((field) => field.trim() !== '');
+
     onParamsChange({
       ...params,
       method,
       url,
       apiKey,
-      customBody: JSON.stringify(bodyObj),
+      query_params: queryParamsObj,
+      body: bodyObj,
+      responseFields: filteredResponseFields,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [method, url, apiKey, customBody]);
+  }, [method, url, apiKey, queryParams, customBody, responseFields]);
+
+  const handleQueryParamsChange = (idx: number, field: 'key' | 'value', val: string) => {
+    setQueryParams((prev) =>
+      prev.map((item, i) => (i === idx ? { ...item, [field]: val } : item))
+    );
+  };
 
   const handleCustomBodyChange = (idx: number, field: 'key' | 'value', val: string) => {
     setCustomBody((prev) =>
@@ -45,12 +66,34 @@ function CustomizeModeContent({ onParamsChange, params }: CustomizeModeContentPr
     );
   };
 
-  const handleAddRow = () => {
+  const handleAddQueryParamRow = () => {
+    setQueryParams((prev) => [...prev, { key: '', value: '' }]);
+  };
+
+  const handleRemoveQueryParamRow = (idx: number) => {
+    setQueryParams((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  const handleAddBodyRow = () => {
     setCustomBody((prev) => [...prev, { key: '', value: '' }]);
   };
 
-  const handleRemoveRow = (idx: number) => {
+  const handleRemoveBodyRow = (idx: number) => {
     setCustomBody((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  const handleResponseFieldsChange = (idx: number, val: string) => {
+    setResponseFields((prev) =>
+      prev.map((item, i) => (i === idx ? val : item))
+    );
+  };
+
+  const handleAddResponseField = () => {
+    setResponseFields((prev) => [...prev, '']);
+  };
+
+  const handleRemoveResponseField = (idx: number) => {
+    setResponseFields((prev) => prev.filter((_, i) => i !== idx));
   };
 
   return (
@@ -102,36 +145,133 @@ function CustomizeModeContent({ onParamsChange, params }: CustomizeModeContentPr
         fullWidth
         margin="normal"
       />
-      <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 1, marginBottom: 1 }}>
+      {method === 'GET' && (
+        <>
+          <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 1, marginBottom: 1 }}>
+            <Typography sx={{ color: '#FFFFFF' }}>
+              Query Params（可選）
+            </Typography>
+            <IconButton onClick={handleAddQueryParamRow} size="small" sx={{ color: '#FFFFFF', display: 'flex' }}>
+              <AddCircleOutlineIcon />
+            </IconButton>
+          </Box>
+          {queryParams.map((item, idx) => (
+            <Grid container spacing={0.8} alignItems="center" key={idx} sx={{ marginBottom: 1 }}>
+              <Grid>
+                <TextField
+                  label="Key"
+                  value={item.key}
+                  onChange={(e) => handleQueryParamsChange(idx, 'key', e.target.value)}
+                  sx={{
+                    color: '#FFFFFF',
+                    '.MuiInputBase-input': { color: '#FFFFFF' },
+                    '.MuiInputLabel-root': { color: '#FFFFFF' },
+                    '.MuiOutlinedInput-notchedOutline': { borderColor: '#737576' },
+                  }}
+                  fullWidth
+                  size="small"
+                />
+              </Grid>
+              <Grid>
+                <TextField
+                  label="Value"
+                  value={item.value}
+                  onChange={(e) => handleQueryParamsChange(idx, 'value', e.target.value)}
+                  sx={{
+                    color: '#FFFFFF',
+                    '.MuiInputBase-input': { color: '#FFFFFF' },
+                    '.MuiInputLabel-root': { color: '#FFFFFF' },
+                    '.MuiOutlinedInput-notchedOutline': { borderColor: '#737576' },
+                  }}
+                  fullWidth
+                  size="small"
+                />
+              </Grid>
+              <Grid>
+                <IconButton
+                  onClick={() => handleRemoveQueryParamRow(idx)}
+                  size="small"
+                  sx={{ color: '#FFFFFF' }}
+                  disabled={queryParams.length === 0}
+                >
+                  <RemoveCircleOutlineIcon />
+                </IconButton>
+              </Grid>
+            </Grid>
+          ))}
+        </>
+      )}
+      {method === 'POST' && (
+        <>
+          <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 1, marginBottom: 1 }}>
+            <Typography sx={{ color: '#FFFFFF' }}>
+              Body（可選）
+            </Typography>
+            <IconButton onClick={handleAddBodyRow} size="small" sx={{ color: '#FFFFFF', display: 'flex' }}>
+              <AddCircleOutlineIcon />
+            </IconButton>
+          </Box>
+          {customBody.map((item, idx) => (
+            <Grid container spacing={0.8} alignItems="center" key={idx} sx={{ marginBottom: 1 }}>
+              <Grid>
+                <TextField
+                  label="Key"
+                  value={item.key}
+                  onChange={(e) => handleCustomBodyChange(idx, 'key', e.target.value)}
+                  sx={{
+                    color: '#FFFFFF',
+                    '.MuiInputBase-input': { color: '#FFFFFF' },
+                    '.MuiInputLabel-root': { color: '#FFFFFF' },
+                    '.MuiOutlinedInput-notchedOutline': { borderColor: '#737576' },
+                  }}
+                  fullWidth
+                  size="small"
+                />
+              </Grid>
+              <Grid>
+                <TextField
+                  label="Value"
+                  value={item.value}
+                  onChange={(e) => handleCustomBodyChange(idx, 'value', e.target.value)}
+                  sx={{
+                    color: '#FFFFFF',
+                    '.MuiInputBase-input': { color: '#FFFFFF' },
+                    '.MuiInputLabel-root': { color: '#FFFFFF' },
+                    '.MuiOutlinedInput-notchedOutline': { borderColor: '#737576' },
+                  }}
+                  fullWidth
+                  size="small"
+                />
+              </Grid>
+              <Grid>
+                <IconButton
+                  onClick={() => handleRemoveBodyRow(idx)}
+                  size="small"
+                  sx={{ color: '#FFFFFF' }}
+                  disabled={customBody.length === 0}
+                >
+                  <RemoveCircleOutlineIcon />
+                </IconButton>
+              </Grid>
+            </Grid>
+          ))}
+        </>
+      )}
+    <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 1, marginBottom: 1 }}>
         <Typography sx={{ color: '#FFFFFF' }}>
-          自訂 Body（可選）
+          Response Fields（可選）
         </Typography>
-        <IconButton onClick={handleAddRow} size="small" sx={{ color: '#FFFFFF', display: 'flex' }}>
+        <IconButton onClick={handleAddResponseField} size="small" sx={{ color: '#FFFFFF', display: 'flex' }}>
           <AddCircleOutlineIcon />
         </IconButton>
       </Box>
-      {customBody.map((item, idx) => (
+      {responseFields.map((field, idx) => (
         <Grid container spacing={0.8} alignItems="center" key={idx} sx={{ marginBottom: 1 }}>
-          <Grid component="div">
-            <TextField
-              label="Key"
-              value={item.key}
-              onChange={(e) => handleCustomBodyChange(idx, 'key', e.target.value)}
-              sx={{
-                color: '#FFFFFF',
-                '.MuiInputBase-input': { color: '#FFFFFF' },
-                '.MuiInputLabel-root': { color: '#FFFFFF' },
-                '.MuiOutlinedInput-notchedOutline': { borderColor: '#737576' },
-              }}
-              fullWidth
-              size="small"
-            />
-          </Grid>
           <Grid>
             <TextField
-              label="Value"
-              value={item.value}
-              onChange={(e) => handleCustomBodyChange(idx, 'value', e.target.value)}
+              label={`Field ${idx + 1}`}
+              value={field}
+              onChange={(e) => handleResponseFieldsChange(idx, e.target.value)}
               sx={{
                 color: '#FFFFFF',
                 '.MuiInputBase-input': { color: '#FFFFFF' },
@@ -144,10 +284,10 @@ function CustomizeModeContent({ onParamsChange, params }: CustomizeModeContentPr
           </Grid>
           <Grid>
             <IconButton
-              onClick={() => handleRemoveRow(idx)}
+              onClick={() => handleRemoveResponseField(idx)}
               size="small"
               sx={{ color: '#FFFFFF' }}
-              disabled={customBody.length === 0}
+              disabled={responseFields.length === 0}
             >
               <RemoveCircleOutlineIcon />
             </IconButton>

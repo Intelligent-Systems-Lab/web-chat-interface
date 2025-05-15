@@ -4,7 +4,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import BotModeSelector from './session_setting/BotModeSelect';
 import ModeContent from './session_setting/ModeContent';
 
-export const sessionSettingWidth = 800;
+export const sessionSettingWidth = 500;
 
 interface SettingProps {
   isOpen: boolean;
