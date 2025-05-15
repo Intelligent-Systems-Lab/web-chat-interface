@@ -1,3 +1,18 @@
+function replaceMessageInObject(obj: any, message: string): any {
+  if (typeof obj === 'string') {
+    return obj.replace(/訊息/g, message);
+  } else if (Array.isArray(obj)) {
+    return obj.map(item => replaceMessageInObject(item, message));
+  } else if (typeof obj === 'object' && obj !== null) {
+    const newObj: Record<string, any> = {};
+    for (const key in obj) {
+      newObj[key] = replaceMessageInObject(obj[key], message);
+    }
+    return newObj;
+  }
+  return obj;
+}
+
 export async function sendCustomizeAPI(params: Record<string, any>, message: string): Promise<string> {
   const { method, url, apiKey, query_params, body, responseFields } = params;
   if (!url) return '缺少目標 URL';
@@ -10,22 +25,16 @@ export async function sendCustomizeAPI(params: Record<string, any>, message: str
   let response: Response;
   try {
     if (method === 'POST') {
-      let bodyObj: Record<string, any> = { messages: [{ role: 'user', content: message }] };
-      if (body) {
-        try {
-          bodyObj = { ...bodyObj, ...body };
-        } catch {
-          return '自訂 Body 不是有效的 JSON 格式';
-        }
-      }
+      const bodyObj = replaceMessageInObject(body || {}, message);
       response = await fetch(url, {
         method: 'POST',
         headers,
         body: JSON.stringify(bodyObj),
       });
     } else {
+      const queryParamsObj = replaceMessageInObject(query_params || {}, message);
       const query = new URLSearchParams({
-        ...query_params,
+        ...queryParamsObj,
         message,
       }).toString();
       response = await fetch(`${url}?${query}`, {

@@ -30,14 +30,13 @@ function CustomizeModeContent({ onParamsChange, params }: CustomizeModeContentPr
   const [responseFields, setResponseFields] = useState<string[]>(params.responseFields || ['']);
 
   useEffect(() => {
-    // 將 queryParams 和 customBody 陣列轉成物件
     const queryParamsObj = queryParams.reduce((acc, { key, value }) => {
-      if (key) acc[key] = value;
+      if (key) acc[key] = tryParseValue(value);
       return acc;
     }, {} as Record<string, string>);
 
     const bodyObj = customBody.reduce((acc, { key, value }) => {
-      if (key) acc[key] = value;
+      if (key) acc[key] = tryParseValue(value);
       return acc;
     }, {} as Record<string, string>);
 
@@ -56,14 +55,34 @@ function CustomizeModeContent({ onParamsChange, params }: CustomizeModeContentPr
 
   const handleQueryParamsChange = (idx: number, field: 'key' | 'value', val: string) => {
     setQueryParams((prev) =>
-      prev.map((item, i) => (i === idx ? { ...item, [field]: val } : item))
+      prev.map((item, i) => {
+        if (i === idx) {
+          const parsedValue = field === 'value' ? val : val;
+          return { ...item, [field]: parsedValue };
+        }
+        return item;
+      })
     );
   };
 
   const handleCustomBodyChange = (idx: number, field: 'key' | 'value', val: string) => {
     setCustomBody((prev) =>
-      prev.map((item, i) => (i === idx ? { ...item, [field]: val } : item))
+      prev.map((item, i) => {
+        if (i === idx) {
+          const parsedValue = field === 'value' ? val : val;
+          return { ...item, [field]: parsedValue };
+        }
+        return item;
+      })
     );
+  };
+
+  const tryParseValue = (val: string): any => {
+    try {
+      return JSON.parse(val);
+    } catch {
+      return val;
+    }
   };
 
   const handleAddQueryParamRow = () => {
