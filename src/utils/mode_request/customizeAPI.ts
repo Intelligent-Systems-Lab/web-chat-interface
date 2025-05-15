@@ -24,7 +24,6 @@ export async function sendCustomizeAPI(params: Record<string, any>, message: str
         body: JSON.stringify(bodyObj),
       });
     } else {
-      // GET 將 query_params 和 message 組合成 query string
       const query = new URLSearchParams({
         ...query_params,
         message,
@@ -39,11 +38,10 @@ export async function sendCustomizeAPI(params: Record<string, any>, message: str
     if (responseFields && Array.isArray(responseFields) && responseFields.length > 0) {
       const extractedFields: Record<string, any> = {};
       for (const field of responseFields) {
-        const keys = field.split('.'); // 支援巢狀 key，用 '.' 分隔
+        const keys = field.split('.');
         let value = data;
         for (const key of keys) {
           if (key.includes('[') && key.includes(']')) {
-            // 處理陣列索引，例如 choices[0]
             const [arrayKey, index] = key.match(/([^\[\]]+)|(\d+)/g) || [];
             if (value[arrayKey] && Array.isArray(value[arrayKey]) && value[arrayKey][+index] !== undefined) {
               value = value[arrayKey][+index];
@@ -62,6 +60,13 @@ export async function sendCustomizeAPI(params: Record<string, any>, message: str
           extractedFields[field] = value;
         }
       }
+
+      if (responseFields.length === 1) {
+        return extractedFields[responseFields[0]] !== undefined
+          ? extractedFields[responseFields[0]]
+          : '欄位值不存在';
+      }
+
       return JSON.stringify(extractedFields);
     }
 

@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import ChatInput from './ChatInput';
 
-const marginPercent = '20%'
+const marginPercent = '20%';
 
 interface ChatWindowProps {
   sessionId: string | null;
@@ -11,6 +11,16 @@ interface ChatWindowProps {
 }
 
 function ChatWindow({ sessionId, messages, onSendMessage, mode }: ChatWindowProps) {
+  const isJson = (str: string) => {
+    try {
+      const parsed = JSON.parse(str);
+      // 確保解析後的結果是物件或陣列
+      return typeof parsed === 'object' && parsed !== null;
+    } catch {
+      return false;
+    }
+  };
+
   return (
     <Box
       display="flex"
@@ -46,7 +56,24 @@ function ChatWindow({ sessionId, messages, onSendMessage, mode }: ChatWindowProp
                   whiteSpace: 'pre-wrap',
                 }}
               >
-                <Typography variant="body1">{msg.text}</Typography>
+                {isJson(msg.text) ? (
+                  <Box
+                    component="pre"
+                    sx={{
+                      margin: 0,
+                      fontFamily: 'monospace',
+                      maxHeight: '200px', // 設置最大高度
+                      overflowY: 'auto', // 垂直滾動條
+                      backgroundColor: '#333', // 可選：設置背景色以區分 JSON 區域
+                      padding: '8px', // 可選：增加內邊距
+                      borderRadius: '4px', // 可選：增加圓角
+                    }}
+                  >
+                    {JSON.stringify(JSON.parse(msg.text), null, 2)}
+                  </Box>
+                ) : (
+                  <Typography variant="body1">{msg.text}</Typography>
+                )}
               </Box>
             </Box>
           ))
