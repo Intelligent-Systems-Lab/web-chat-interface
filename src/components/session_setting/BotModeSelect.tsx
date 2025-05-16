@@ -38,6 +38,7 @@ function BotModeSelector({ mode, onModeChange }: BotModeSelectorProps) {
           }}
         >
           <MenuItem value="openai">OpenAI</MenuItem>
+          <MenuItem value="ollama">Ollama</MenuItem>
           <MenuItem value="customize">Customize</MenuItem>
         </Select>
       </FormControl>

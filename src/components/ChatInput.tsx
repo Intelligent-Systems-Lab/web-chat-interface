@@ -12,12 +12,8 @@ function ChatInput({ onSendMessage, mode }: ChatInputProps) {
 
   const handleSendMessage = () => {
     if (message.trim()) {
-      if (mode === 'customize') {
-        console.log('Customize mode: Message not sent to server.');
-        onSendMessage(message);
-      } else {
-        onSendMessage(message); // 呼叫父元件的發送訊息函式
-      }
+      console.log('Current mode:', mode);
+      onSendMessage(message)
       setMessage(''); // 清空輸入框
     }
   };

@@ -15,16 +15,10 @@ function ChatPage() {
 
   const handleSessionSidebar = () => {
     setSessionIsOpen(!sessionIsOpen);
-    if (!sessionIsOpen) {
-      setSettingSessionIsOpen(false);
-    }
   };
 
   const handleSessionSetting = () => {
     setSettingSessionIsOpen(!sessionSettingIsOpen);
-    if (!sessionSettingIsOpen) {
-      setSessionIsOpen(false);
-    }
   };
 
   const handleSendMessage = async (message: string) => {
