@@ -11,9 +11,8 @@ type SendMessageParams = {
 export async function sendMessage({ mode, params, message }: SendMessageParams): Promise<string> {
   // 根據 mode 決定要發送的內容
   if (mode === 'openai') {
-    const apiKey = params.apiKey;
-    if (!apiKey) return '缺少 OpenAI API 金鑰';
-    return await sendOpenAIMessage(apiKey, message);
+    if (!params.apiKey) return '缺少 OpenAI API 金鑰';
+    return await sendOpenAIMessage(params, message);
   } else if (mode === 'ollama') {
     return await sendOllamaRequest(params, message);
   } else if (mode === 'customize') {

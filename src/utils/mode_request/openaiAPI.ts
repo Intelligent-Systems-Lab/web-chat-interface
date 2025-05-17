@@ -1,4 +1,20 @@
-export async function sendOpenAIMessage(apiKey: string, message: string): Promise<string> {
+export async function sendOpenAIMessage(params: Record<string, any>, message: string): Promise<string> {
+  const { apiKey, model: originalModel, prompt: originalPrompt } = params;
+  
+  let model = originalModel || '';
+  if (!model || model.trim() === '') {
+    model = 'gpt-4o-mini';
+  }
+
+  let prompt = originalPrompt || '';
+  if (prompt === '') {
+    prompt = message;
+  } else if (prompt.includes('訊息')) {
+    prompt = prompt.replace('訊息', message);
+  } else {
+    prompt += `\n${message}`;
+  }
+
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -6,8 +22,8 @@ export async function sendOpenAIMessage(apiKey: string, message: string): Promis
       'Authorization': `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: 'gpt-4o-mini',
-      messages: [{ role: 'user', content: message }],
+      model,
+      messages: [{ role: 'user', content: prompt }],
     }),
   });
 

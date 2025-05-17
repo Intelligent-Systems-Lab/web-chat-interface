@@ -8,10 +8,12 @@ interface OpenAIModeContentProps {
 
 function OpenAIModeContent({ onParamsChange, params }: OpenAIModeContentProps) {
   const [apiKey, setApiKey] = useState(params.apiKey || '');
+  const [model, setModel] = useState(params.model || 'gpt-4o-mini');
+  const [prompt, setPrompt] = useState(params.prompt || '');
 
   useEffect(() => {
-    onParamsChange({ ...params, apiKey });
-  }, [apiKey]);
+    onParamsChange({ ...params, apiKey, model, prompt });
+  }, [apiKey, model, prompt]);
 
   return (
     <Box>
@@ -31,6 +33,34 @@ function OpenAIModeContent({ onParamsChange, params }: OpenAIModeContentProps) {
         }}
         fullWidth
         autoComplete="off"
+      />
+      <TextField
+        label="Model"
+        value={model}
+        onChange={(e) => setModel(e.target.value)}
+        sx={{
+          color: '#FFFFFF',
+          '.MuiInputBase-input': { color: '#FFFFFF' },
+          '.MuiInputLabel-root': { color: '#FFFFFF' },
+          '.MuiOutlinedInput-notchedOutline': { borderColor: '#737576' },
+        }}
+        fullWidth
+        margin="normal"
+      />
+      <TextField
+        label="Prompt (可選)"
+        value={prompt}
+        onChange={(e) => setPrompt(e.target.value)}
+        sx={{
+          color: '#FFFFFF',
+          '.MuiInputBase-input': { color: '#FFFFFF' },
+          '.MuiInputLabel-root': { color: '#FFFFFF' },
+          '.MuiOutlinedInput-notchedOutline': { borderColor: '#737576' },
+        }}
+        fullWidth
+        margin="normal"
+        multiline
+        rows={4}
       />
     </Box>
   );
