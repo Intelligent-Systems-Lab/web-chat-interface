@@ -1,3 +1,8 @@
+# Python Backend
+.env
+__pycache__/
+mongodb/
+
 # Logs
 logs
 *.log
