@@ -132,7 +132,6 @@ function ChatPage() {
           sessionId={activeSessionId}
           messages={activeSessionId ? sessionMessages[activeSessionId] || [] : []}
           onSendMessage={handleSendMessage}
-          mode={activeSessionId ? sessionModes[activeSessionId] || 'openai' : 'openai'}
         />
       </Box>
 

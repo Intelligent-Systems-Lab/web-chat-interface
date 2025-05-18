@@ -7,10 +7,9 @@ interface ChatWindowProps {
   sessionId: string | null;
   messages: { id: number; sender: string; text: string }[];
   onSendMessage: (message: string) => void;
-  mode: string; // 新增 mode 屬性
 }
 
-function ChatWindow({ sessionId, messages, onSendMessage, mode }: ChatWindowProps) {
+function ChatWindow({ sessionId, messages, onSendMessage }: ChatWindowProps) {
   const isJson = (str: string) => {
     try {
       const parsed = JSON.parse(str);
@@ -82,7 +81,7 @@ function ChatWindow({ sessionId, messages, onSendMessage, mode }: ChatWindowProp
         )}
       </Box>
 
-      <ChatInput onSendMessage={onSendMessage} mode={mode} /> {/* 傳遞 mode */}
+      <ChatInput onSendMessage={onSendMessage} /> {/* 傳遞 mode */}
     </Box>
   );
 }

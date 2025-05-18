@@ -4,15 +4,13 @@ import { useState } from 'react';
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
-  mode: string; // 新增 mode 屬性
 }
 
-function ChatInput({ onSendMessage, mode }: ChatInputProps) {
+function ChatInput({ onSendMessage }: ChatInputProps) {
   const [message, setMessage] = useState('');
 
   const handleSendMessage = () => {
     if (message.trim()) {
-      console.log('Current mode:', mode);
       onSendMessage(message)
       setMessage(''); // 清空輸入框
     }
