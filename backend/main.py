@@ -1,8 +1,25 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from bson import ObjectId
 from config import DB
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/")
+async def root():
+    return {"message": "Welcome to the FastAPI application!"}
 
 @app.get("/session-settings")
 async def get_all_session_settings():
@@ -23,7 +40,7 @@ async def save_session_setting(setting: dict):
     result = await DB["session_settings"].insert_one(setting)
     return {"id": str(result.inserted_id)}
 
-@app.put("/session-settings/{setting_id}")
+@app.post("/session-settings/{setting_id}")
 async def update_session_setting(setting_id: str, setting: dict):
     result = await DB["session_settings"].replace_one({"_id": ObjectId(setting_id)}, setting)
     if result.matched_count == 0:

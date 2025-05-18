@@ -10,8 +10,8 @@ function ChatPage() {
   const [sessionIsOpen, setSessionIsOpen] = useState(true);
   const [sessionMessages, setSessionMessages] = useState<Record<string, { id: number; sender: string; text: string }[]>>({});
   const [sessionSettingIsOpen, setSettingSessionIsOpen] = useState(true);
-  const [sessionModes, setSessionModes] = useState<Record<string, string>>({}); // 新增狀態來保存每個 session 的 mode
-  const [sessionParams, setSessionParams] = useState<Record<string, Record<string, any>>>({}); // 新增狀態來保存參數
+  const [sessionModes, setSessionModes] = useState<Record<string, string>>({});
+  const [sessionParams, setSessionParams] = useState<Record<string, Record<string, any>>>({});
 
   const handleSessionSidebar = () => {
     setSessionIsOpen(!sessionIsOpen);
@@ -32,7 +32,7 @@ function ChatPage() {
       ],
     }));
 
-    const currentMode = sessionModes[activeSessionId] || 'openai'; // 獲取當前 session 的 mode
+    const currentMode = sessionModes[activeSessionId] || 'openai';
     const currentParams = sessionParams[activeSessionId] || {};
     const botResponse = await sendMessage({
       mode: currentMode,
@@ -63,8 +63,16 @@ function ChatPage() {
 
     setSessionParams((prevParams) => ({
       ...prevParams,
-      [activeSessionId]: params,
+      [activeSessionId]: {
+        ...prevParams[activeSessionId],
+        ...params,
+      },
     }));
+
+    // 如果 params 中包含新的 sessionId，更新 activeSessionId
+    if (params.sessionId) {
+      setActiveSessionId(params.sessionId);
+    }
   };
 
   const sidebarWidth = sessionIsOpen ? sessionSideBarWidth : 0;
@@ -107,11 +115,13 @@ function ChatPage() {
       >
         <SessionSetting
           isOpen={sessionSettingIsOpen}
-          onToggleSidebar={handleSessionSetting} // 傳遞控制函式
-          mode={activeSessionId ? sessionModes[activeSessionId] || 'openai' : 'openai'} // 傳遞當前 session 的 mode
-          onModeChange={handleModeChange} // 傳遞 mode 更新函式
-          onParamsChange={handleParamsChange} // 傳遞參數更新函式
-          params={activeSessionId ? sessionParams[activeSessionId] || {} : {}} // 傳遞當前參數
+          onToggleSidebar={handleSessionSetting}
+          mode={activeSessionId ? sessionModes[activeSessionId] || 'openai' : 'openai'}
+          onModeChange={handleModeChange}
+          onParamsChange={handleParamsChange}
+          params={activeSessionId ? sessionParams[activeSessionId] || {} : {}}
+          sessionId={activeSessionId || ''} // 傳遞 sessionId
+          sessionName={activeSessionId ? `Session ${activeSessionId}` : 'Default Session'} // 傳遞 sessionName
         />
       </Box>
 

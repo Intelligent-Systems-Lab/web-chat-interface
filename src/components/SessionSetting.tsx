@@ -3,16 +3,19 @@ import { Drawer, List, Box, IconButton, Button } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import BotModeSelector from './session_setting/BotModeSelect';
 import ModeContent from './session_setting/ModeContent';
+import api from '../api/axios';
 
 export const sessionSettingWidth = 500;
 
 interface SettingProps {
   isOpen: boolean;
   onToggleSidebar: () => void;
-  mode: string; // 接收當前 session 的 mode
-  onModeChange: (mode: string) => void; // 更新 mode 的函式
-  onParamsChange: (params: Record<string, any>) => void; // 新增參數更新函式
-  params: Record<string, any>; // 接收當前參數
+  mode: string;
+  onModeChange: (mode: string) => void;
+  onParamsChange: (params: Record<string, any>) => void;
+  params: Record<string, any>;
+  sessionId: string; 
+  sessionName: string; 
 }
 
 function SessionSetting({ isOpen, onToggleSidebar, mode, onModeChange, onParamsChange, params }: SettingProps) {
@@ -20,16 +23,33 @@ function SessionSetting({ isOpen, onToggleSidebar, mode, onModeChange, onParamsC
   const [localMode, setLocalMode] = useState<string>(mode);
   const [localParams, setLocalParams] = useState<Record<string, any>>(params);
 
-  // 當父元件的 mode 或 params 改變時，同步更新本地狀態
   useEffect(() => {
     setLocalMode(mode);
     setLocalParams(params);
   }, [mode, params]);
   
-  const handleSaveSettings = () => {
+  const handleSaveSettings = async () => {
     onModeChange(localMode);
     onParamsChange(localParams);
-    alert(`設定已保存！當前模式為: ${localMode}`);
+
+    try {
+      const payload = {
+        sessionName,
+        mode: localMode,
+        params: localParams,
+      };
+      const response = await api.post('/session-settings', payload);
+      console.log('設定已保存:', response.data);
+
+      if (response.data.id) {
+        onParamsChange({ ...localParams, sessionId: response.data.id });
+      }
+
+      alert(`設定已保存！當前模式為: ${localMode}`);
+    } catch (error) {
+      console.error('保存設定時發生錯誤:', error);
+      alert('保存設定失敗，請稍後再試。');
+    }
   };
   
   return (
@@ -83,7 +103,7 @@ function SessionSetting({ isOpen, onToggleSidebar, mode, onModeChange, onParamsC
         </Box>
         <ModeContent
           mode={localMode}
-          onParamsChange={setLocalParams} // 傳遞本地狀態的更新函式
+          onParamsChange={setLocalParams}
           params={localParams}
         />
         <Box

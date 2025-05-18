@@ -3,6 +3,9 @@
 __pycache__/
 mongodb/
 
+# Docker compose
+docker-compose.yml
+
 # Logs
 logs
 *.log

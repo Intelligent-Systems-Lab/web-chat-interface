@@ -5,7 +5,7 @@ import EditIcon from '@mui/icons-material/Edit'; // 引入編輯圖示
 import SessionItem from './SessionItem';
 import DeleteSession from './DeleteSession'; // 引入刪除對話的組件
 import EditSquareIcon from '@mui/icons-material/EditSquare';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export const sessionSideBarWidth = 300;
 
@@ -18,42 +18,23 @@ interface SidebarProps {
 
 function SessionSidebar({ activeSessionId, onSelectSession, isOpen, onToggleSidebar }: SidebarProps) {
   const [chatSessions, setSessions] = useState<{ id: string; title: string }[]>([]);
-  const [editingSessionId, setEditingSessionId] = useState<string | null>(null); // 用來追蹤正在編輯的 session
-  const [newTitle, setNewTitle] = useState<string>(''); // 用來暫存新的標題
-  const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null); // 用來追蹤要刪除的 session ID
-  const [isDialogOpen, setDialogOpen] = useState(false); // 控制 Dialog 開關
-
-  // 初始化時從 localStorage 讀取 sessions
-  useEffect(() => {
-    const savedSessions = localStorage.getItem('chatSessions');
-    if (savedSessions) {
-      try {
-        setSessions(JSON.parse(savedSessions)); // 確保 JSON 格式正確
-      } catch (error) {
-        console.error('Failed to parse chatSessions from localStorage:', error);
-      }
-    }
-  }, []);
-
-  // 每次 sessions 更新時，同步到 localStorage
-  useEffect(() => {
-    console.log('Updating localStorage with sessions:', chatSessions);
-    localStorage.setItem('chatSessions', JSON.stringify(chatSessions));
-  }, [chatSessions]);
-
+  const [editingSessionId, setEditingSessionId] = useState<string | null>(null); 
+  const [newTitle, setNewTitle] = useState<string>('');
+  const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null); 
+  const [isDialogOpen, setDialogOpen] = useState(false); 
   const handleAddSession = () => {
     const newSession = {
-      id: (chatSessions.length + 1).toString(), // 動態生成 ID
-      title: `對話 ${chatSessions.length + 1}`, // 動態生成標題
+      id: crypto.randomUUID(),
+      title: `新對話`,
     };
-    setSessions([...chatSessions, newSession]); // 更新 sessions 狀態
+    setSessions([...chatSessions, newSession]); 
   };
 
   const handleEditSession = (id: string) => {
     const session = chatSessions.find((s) => s.id === id);
     if (session) {
-      setEditingSessionId(id); // 設置正在編輯的 session ID
-      setNewTitle(session.title); // 初始化新的標題
+      setEditingSessionId(id); 
+      setNewTitle(session.title); 
     }
   };
 
