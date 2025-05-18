@@ -12,6 +12,7 @@ function ChatPage() {
   const [sessionSettingIsOpen, setSettingSessionIsOpen] = useState(true);
   const [sessionModes, setSessionModes] = useState<Record<string, string>>({});
   const [sessionParams, setSessionParams] = useState<Record<string, Record<string, any>>>({});
+  const [chatSessions, setChatSessions] = useState<{ id: string; title: string }[]>([]);
 
   const handleSessionSidebar = () => {
     setSessionIsOpen(!sessionIsOpen);
@@ -19,6 +20,30 @@ function ChatPage() {
 
   const handleSessionSetting = () => {
     setSettingSessionIsOpen(!sessionSettingIsOpen);
+  };
+
+  const handleAddSession = () => {
+    const newSession = {
+      id: crypto.randomUUID(),
+      title: `新對話`,
+    };
+    setChatSessions((prevSessions) => [...prevSessions, newSession]);
+    setActiveSessionId(newSession.id); 
+  };
+
+  const handleEditSession = (id: string, newTitle: string) => {
+    setChatSessions((prevSessions) =>
+      prevSessions.map((session) =>
+        session.id === id ? { ...session, title: newTitle } : session
+      )
+    );
+  };
+
+  const handleDeleteSession = (id: string) => {
+    setChatSessions((prevSessions) => prevSessions.filter((session) => session.id !== id));
+    if (activeSessionId === id) {
+      setActiveSessionId(null); 
+    }
   };
 
   const handleSendMessage = async (message: string) => {
@@ -69,7 +94,6 @@ function ChatPage() {
       },
     }));
 
-    // 如果 params 中包含新的 sessionId，更新 activeSessionId
     if (params.sessionId) {
       setActiveSessionId(params.sessionId);
     }
@@ -83,13 +107,17 @@ function ChatPage() {
       <Box
         width={sidebarWidth}
         bgcolor='#212121'
-        sx={{ transition: 'width 0.3s' }} // 平滑過渡效果
+        sx={{ transition: 'width 0.3s' }}
       >
         <SessionSidebar
           activeSessionId={activeSessionId}
           onSelectSession={setActiveSessionId}
           isOpen={sessionIsOpen}
-          onToggleSidebar={handleSessionSidebar} // 傳遞控制函式
+          onToggleSidebar={handleSessionSidebar}
+          chatSessions={chatSessions}
+          onAddSession={handleAddSession}
+          onEditSession={handleEditSession}
+          onDeleteSession={handleDeleteSession}
         />
       </Box>
 
@@ -104,14 +132,14 @@ function ChatPage() {
           sessionId={activeSessionId}
           messages={activeSessionId ? sessionMessages[activeSessionId] || [] : []}
           onSendMessage={handleSendMessage}
-          mode={activeSessionId ? sessionModes[activeSessionId] || 'openai' : 'openai'} // 傳遞 mode
+          mode={activeSessionId ? sessionModes[activeSessionId] || 'openai' : 'openai'}
         />
       </Box>
 
       <Box
         width={settingWidth}
         bgcolor='#212121'
-        sx={{ transition: 'width 0.3s' }} // 平滑過渡效果
+        sx={{ transition: 'width 0.3s' }} 
       >
         <SessionSetting
           isOpen={sessionSettingIsOpen}
@@ -120,8 +148,11 @@ function ChatPage() {
           onModeChange={handleModeChange}
           onParamsChange={handleParamsChange}
           params={activeSessionId ? sessionParams[activeSessionId] || {} : {}}
-          sessionId={activeSessionId || ''} // 傳遞 sessionId
-          sessionName={activeSessionId ? `Session ${activeSessionId}` : 'Default Session'} // 傳遞 sessionName
+          sessionId={activeSessionId || ''} 
+          sessionName={
+            activeSessionId 
+              ? chatSessions.find((session) => session.id === activeSessionId)?.title || `Session ${activeSessionId}` 
+              : 'Default Session'}
         />
       </Box>
 

@@ -18,7 +18,7 @@ interface SettingProps {
   sessionName: string; 
 }
 
-function SessionSetting({ isOpen, onToggleSidebar, mode, onModeChange, onParamsChange, params }: SettingProps) {
+function SessionSetting({ isOpen, onToggleSidebar, mode, onModeChange, onParamsChange, params, sessionId, sessionName }: SettingProps) {
   
   const [localMode, setLocalMode] = useState<string>(mode);
   const [localParams, setLocalParams] = useState<Record<string, any>>(params);
@@ -29,21 +29,20 @@ function SessionSetting({ isOpen, onToggleSidebar, mode, onModeChange, onParamsC
   }, [mode, params]);
   
   const handleSaveSettings = async () => {
+    console.log('session id:', sessionId);
+    console.log('session name:', sessionName);
+
     onModeChange(localMode);
     onParamsChange(localParams);
 
     try {
       const payload = {
-        sessionName,
         mode: localMode,
+        name: sessionName,
         params: localParams,
       };
       const response = await api.post('/session-settings', payload);
       console.log('設定已保存:', response.data);
-
-      if (response.data.id) {
-        onParamsChange({ ...localParams, sessionId: response.data.id });
-      }
 
       alert(`設定已保存！當前模式為: ${localMode}`);
     } catch (error) {
