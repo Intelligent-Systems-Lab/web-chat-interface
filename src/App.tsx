@@ -153,6 +153,10 @@ function ChatPage() {
             activeSessionId 
               ? chatSessions.find((session) => session.id === activeSessionId)?.title || `Session ${activeSessionId}` 
               : 'Default Session'}
+          setChatSessions={setChatSessions}
+          setActiveSessionId={setActiveSessionId}
+          setSessionParams={setSessionParams}
+          setSessionModes={setSessionModes}
         />
       </Box>
 

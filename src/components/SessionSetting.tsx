@@ -15,10 +15,27 @@ interface SettingProps {
   onParamsChange: (params: Record<string, any>) => void;
   params: Record<string, any>;
   sessionId: string; 
-  sessionName: string; 
+  sessionName: string;
+  setChatSessions: React.Dispatch<React.SetStateAction<{ id: string; title: string }[]>>;
+  setActiveSessionId: (session_id:string) => void;
+  setSessionParams: React.Dispatch<React.SetStateAction<Record<string, Record<string, any>>>>;
+  setSessionModes: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 }
 
-function SessionSetting({ isOpen, onToggleSidebar, mode, onModeChange, onParamsChange, params, sessionId, sessionName }: SettingProps) {
+function SessionSetting({
+    isOpen, 
+    onToggleSidebar, 
+    mode, 
+    onModeChange, 
+    onParamsChange, 
+    params, 
+    sessionId, 
+    sessionName,
+    setChatSessions,
+    setActiveSessionId,
+    setSessionParams,
+    setSessionModes
+  }: SettingProps) {
   
   const [localMode, setLocalMode] = useState<string>(mode);
   const [localParams, setLocalParams] = useState<Record<string, any>>(params);
@@ -27,10 +44,38 @@ function SessionSetting({ isOpen, onToggleSidebar, mode, onModeChange, onParamsC
     setLocalMode(mode);
     setLocalParams(params);
   }, [mode, params]);
-  
+
+  const replaceSessionId = (oldId: string, newId: string) => {
+    setChatSessions((prevSessions) => {
+      const session = prevSessions.find(s => s.id === oldId);
+      if (session) {
+        session.id = newId;
+      }
+      return [...prevSessions];
+    });
+    setSessionParams((prevParams) => {
+      const { [oldId]: oldParams, ...rest } = prevParams;
+      if (oldParams) {
+        return {
+          ...rest,
+          [newId]: oldParams,
+        };
+      }
+      return prevParams;
+    });
+    setSessionModes((prevModes) => {
+      const { [oldId]: oldMode, ...rest } = prevModes;
+      if (oldMode) {
+        return {
+          ...rest,
+          [newId]: oldMode,
+        };
+      }
+      return prevModes;
+    });
+  };
+
   const handleSaveSettings = async () => {
-    console.log('session id:', sessionId);
-    console.log('session name:', sessionName);
 
     onModeChange(localMode);
     onParamsChange(localParams);
@@ -42,8 +87,8 @@ function SessionSetting({ isOpen, onToggleSidebar, mode, onModeChange, onParamsC
         params: localParams,
       };
       const response = await api.post('/session-settings', payload);
-      console.log('設定已保存:', response.data);
-
+      replaceSessionId(sessionId, response.data.id);
+      setActiveSessionId(response.data.id);
       alert(`設定已保存！當前模式為: ${localMode}`);
     } catch (error) {
       console.error('保存設定時發生錯誤:', error);
