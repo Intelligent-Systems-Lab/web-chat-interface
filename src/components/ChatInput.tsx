@@ -49,6 +49,7 @@ function ChatInput({ onSendMessage }: ChatInputProps) {
           color: 'white',
           backgroundColor: '#444',
           borderRadius: '8px',
+          width: 'calc(100% - 60px)',
           '& .MuiOutlinedInput-root': {
             '& fieldset': {
               border: 'none',

@@ -1,5 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import ChatInput from './ChatInput';
+import HomeImg from './HomeImg';
 
 const marginPercent = '20%';
 
@@ -77,11 +78,11 @@ function ChatWindow({ sessionId, messages, onSendMessage }: ChatWindowProps) {
             </Box>
           ))
         ) : (
-          <Typography color="gray">請選擇一個對話</Typography>
+          <HomeImg />
         )}
       </Box>
 
-      <ChatInput onSendMessage={onSendMessage} /> {/* 傳遞 mode */}
+      {sessionId && <ChatInput onSendMessage={onSendMessage} />}
     </Box>
   );
 }
