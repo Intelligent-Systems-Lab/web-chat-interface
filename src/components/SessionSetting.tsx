@@ -31,13 +31,13 @@ function SessionSetting({
   
   const sessionData = testChatSessions.find((session) => session.id === sessionId);
   const [localTitle, setLocalTitle] = useState<string>(sessionData?.title || '新對話');
-  const [localMode, setLocalMode] = useState<string>(sessionData?.mode || 'openai');
+  const [localMode, setLocalMode] = useState<string>(sessionData?.mode || '');
   const [localParams, setLocalParams] = useState<Record<string, any>>(sessionData?.params || {});
 
   useEffect(() => {
     const updatedSessionData = testChatSessions.find((session) => session.id === sessionId);
     setLocalTitle(updatedSessionData?.title || '新對話');
-    setLocalMode(updatedSessionData?.mode || 'openai');
+    setLocalMode(updatedSessionData?.mode || '');
     setLocalParams(updatedSessionData?.params || {});
   }, [sessionId, testChatSessions]);
 

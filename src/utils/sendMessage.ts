@@ -9,16 +9,16 @@ type SendMessageParams = {
 };
 
 export async function sendMessage({ mode, params, message }: SendMessageParams): Promise<string> {
-  // 根據 mode 決定要發送的內容
-  if (mode === 'openai') {
+  if (mode === '') {
+    return `請先選擇模式保存設定`;
+  } else if (mode === 'openai') { 
     if (!params.apiKey) return '缺少 OpenAI API 金鑰';
     return await sendOpenAIMessage(params, message);
-  } else if (mode === 'ollama') {
+  }  else if (mode === 'ollama') {
     return await sendOllamaRequest(params, message);
   } else if (mode === 'customize') {
     return await sendCustomizeAPI(params, message);
   } else {
-    // 預設回應
     return `未知模式: ${mode}`;
   }
 }

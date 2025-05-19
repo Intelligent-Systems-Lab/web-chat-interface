@@ -24,7 +24,10 @@ async def root():
 @app.get("/session-settings")
 async def get_all_session_settings():
     settings = await DB["session_settings"].find().to_list(100)
-    return [{"id": str(setting["_id"]), **setting} for setting in settings]
+    return [
+        {"id": str(setting["_id"]), **{k: v for k, v in setting.items() if k != "_id"}}
+        for setting in settings
+    ]
 
 @app.get("/session-settings/{setting_id}")
 async def get_session_setting_by_id(setting_id: str):

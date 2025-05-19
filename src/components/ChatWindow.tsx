@@ -61,11 +61,11 @@ function ChatWindow({ sessionId, messages, onSendMessage }: ChatWindowProps) {
                     sx={{
                       margin: 0,
                       fontFamily: 'monospace',
-                      maxHeight: '200px', // 設置最大高度
-                      overflowY: 'auto', // 垂直滾動條
-                      backgroundColor: '#333', // 可選：設置背景色以區分 JSON 區域
-                      padding: '8px', // 可選：增加內邊距
-                      borderRadius: '4px', // 可選：增加圓角
+                      maxHeight: '200px', 
+                      overflowY: 'auto', 
+                      backgroundColor: '#333', 
+                      padding: '8px',
+                      borderRadius: '4px',
                     }}
                   >
                     {JSON.stringify(JSON.parse(msg.text), null, 2)}

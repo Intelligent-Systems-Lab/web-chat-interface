@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SessionSidebar, {sessionSideBarWidth} from './components/SessionSideBar';
 import SessionSetting, { sessionSettingWidth } from './components/SessionSetting';
 import ChatWindow from './components/ChatWindow';
@@ -19,6 +19,19 @@ function ChatPage() {
   const [sessionMessages, setSessionMessages] = useState<Record<string, { id: number; sender: string; text: string }[]>>({});
   const [sessionSettingIsOpen, setSettingSessionIsOpen] = useState(true);
   const [testChatSessions, setTestChatSessions] = useState<ChatSession[]>([]);
+
+  useEffect(() => {
+    const fetchChatSessions = async () => {
+      try {
+        const response = await api.get('/session-settings');
+        setTestChatSessions(response.data);
+      } catch (error) {
+        console.error('載入 session-settings 時發生錯誤:', error);
+      }
+    };
+
+    fetchChatSessions();
+  }, []);
 
   const handleSessionSidebar = () => {
     setSessionIsOpen(!sessionIsOpen);
@@ -73,7 +86,7 @@ function ChatPage() {
     }));
 
     const currentSession = testChatSessions.find((session) => session.id === activeSessionId);
-    const currentMode = currentSession?.mode || 'openai';
+    const currentMode = currentSession?.mode || '';
     const currentParams = currentSession?.params || {};
     const botResponse = await sendMessage({
       mode: currentMode,
