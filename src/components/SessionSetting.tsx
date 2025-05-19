@@ -61,6 +61,7 @@ function SessionSetting({
 
     try {
       const payload = {
+        id: sessionId,
         mode: localMode,
         title: localTitle,
         params: localParams,
