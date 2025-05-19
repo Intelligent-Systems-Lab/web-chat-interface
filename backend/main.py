@@ -37,8 +37,19 @@ async def get_session_setting_by_id(setting_id: str):
 
 @app.post("/session-settings")
 async def save_session_setting(setting: dict):
-    result = await DB["session_settings"].insert_one(setting)
-    return {"id": str(result.inserted_id)}
+    if "id" in setting:
+        setting_id = setting.pop("id")
+        result = await DB["session_settings"].replace_one(
+            {"_id": ObjectId(setting_id)}, 
+            setting
+        )
+        if result.matched_count > 0:
+            return {"message": "Session setting updated successfully", "id": setting_id}
+        else:
+            raise HTTPException(status_code=404, detail="Session setting not found")
+    else:
+        result = await DB["session_settings"].insert_one(setting)
+        return {"id": str(result.inserted_id)}
 
 @app.post("/session-settings/{setting_id}")
 async def update_session_setting(setting_id: str, setting: dict):
