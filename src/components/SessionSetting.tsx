@@ -55,7 +55,11 @@ function SessionSetting({
   };
 
   const handleSaveSettings = async () => {
-
+    if (!sessionId) {
+      alert('請先選擇對話');
+      return;
+    }
+    
     onModeChange(localMode);
     onParamsChange(localParams);
 

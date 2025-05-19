@@ -11,11 +11,9 @@ function HomeImg() {
           borderRadius: '23%'
         }} 
       />
-      {/* 
-      <p style={{ textAlign: 'center', fontSize: '18px', color: '#888', marginTop: '0px' }}>
-        Provide by ISL
-      </p> 
-      */}
+      <p style={{ textAlign: 'center', fontSize: '18px', color: '#888', marginTop: '10px' }}>
+        請選擇左邊對話紀錄來開始對話
+      </p>
     </div>
   );
 }
