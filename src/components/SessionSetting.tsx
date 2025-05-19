@@ -14,11 +14,7 @@ interface SettingProps {
   onModeChange: (mode: string) => void;
   onParamsChange: (params: Record<string, any>) => void;
   sessionId: string; 
-  setChatSessions: React.Dispatch<React.SetStateAction<{ id: string; title: string }[]>>;
-  setActiveSessionId: (session_id:string) => void;
-  setSessionParams: React.Dispatch<React.SetStateAction<Record<string, Record<string, any>>>>;
-  setSessionModes: React.Dispatch<React.SetStateAction<Record<string, string>>>;
-  testChatSessions: ChatSession[];
+  setActiveSessionId: (session_id:string) => void;testChatSessions: ChatSession[];
   setTestChatSessions: React.Dispatch<React.SetStateAction<ChatSession[]>>;
 }
 
@@ -28,10 +24,7 @@ function SessionSetting({
     onModeChange, 
     onParamsChange, 
     sessionId,
-    setChatSessions,
     setActiveSessionId,
-    setSessionParams,
-    setSessionModes,
     testChatSessions,
     setTestChatSessions
   }: SettingProps) {
@@ -49,34 +42,9 @@ function SessionSetting({
   }, [sessionId, testChatSessions]);
 
   const replaceSessionId = (oldId: string, newId: string) => {
-    setChatSessions((prevSessions) => {
-      const session = prevSessions.find(s => s.id === oldId);
-      if (session) {
-        session.id = newId;
-      }
-      return [...prevSessions];
-    });
-    setSessionParams((prevParams) => {
-      const { [oldId]: oldParams, ...rest } = prevParams;
-      if (oldParams) {
-        return {
-          ...rest,
-          [newId]: oldParams,
-        };
-      }
-      return prevParams;
-    });
-    setSessionModes((prevModes) => {
-      const { [oldId]: oldMode, ...rest } = prevModes;
-      if (oldMode) {
-        return {
-          ...rest,
-          [newId]: oldMode,
-        };
-      }
-      return prevModes;
-    });
-
+    if (oldId === newId) {
+      return;
+    }
     setTestChatSessions((prevSessions) => {
       const session = prevSessions.find(s => s.id === oldId);
       if (session) {
@@ -106,7 +74,17 @@ function SessionSetting({
       alert('保存設定失敗，請稍後再試。');
     }
   };
-  
+
+  const handleModeChange = (newMode: string) => {
+    setLocalMode(newMode);
+    const oldData = testChatSessions.find((session) => session.id === sessionId);
+    if (newMode === oldData?.mode) {
+      setLocalParams(oldData.params);
+    } else {
+      setLocalParams({});
+    }
+  };
+    
   return (
     <>
       <Drawer
@@ -154,7 +132,7 @@ function SessionSetting({
           }}
         >
           {/* 傳遞本地狀態的更新函式 */}
-          <BotModeSelector onModeChange={setLocalMode} mode={localMode} />
+          <BotModeSelector onModeChange={handleModeChange} mode={localMode} />
         </Box>
         <ModeContent
           mode={localMode}

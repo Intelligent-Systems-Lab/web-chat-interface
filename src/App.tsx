@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import SessionSidebar, {sessionSideBarWidth} from './components/SessionSideBar';
 import SessionSetting, { sessionSettingWidth } from './components/SessionSetting';
 import ChatWindow from './components/ChatWindow';
@@ -17,18 +17,7 @@ function ChatPage() {
   const [sessionIsOpen, setSessionIsOpen] = useState(true);
   const [sessionMessages, setSessionMessages] = useState<Record<string, { id: number; sender: string; text: string }[]>>({});
   const [sessionSettingIsOpen, setSettingSessionIsOpen] = useState(true);
-  const [sessionModes, setSessionModes] = useState<Record<string, string>>({});
-  const [sessionParams, setSessionParams] = useState<Record<string, Record<string, any>>>({});
-  const [chatSessions, setChatSessions] = useState<{ id: string; title: string }[]>([]);
   const [testChatSessions, setTestChatSessions] = useState<ChatSession[]>([]);
-
-  useEffect(() => {
-    console.log('-----------------------------')
-    console.log('chatSessions:', chatSessions);
-    console.log('sessionParams:', sessionParams);
-    console.log('sessionModes:', sessionModes);
-    console.log('testChatSessions:', testChatSessions);
-  }, [chatSessions, sessionParams, sessionModes]);
 
   const handleSessionSidebar = () => {
     setSessionIsOpen(!sessionIsOpen);
@@ -43,9 +32,6 @@ function ChatPage() {
       id: crypto.randomUUID(),
       title: `新對話`,
     };
-    //del
-    setChatSessions((prevSessions) => [...prevSessions, newSession]);
-    
     setTestChatSessions((prevSessions) => [
       ...prevSessions,
       { id: newSession.id, title: newSession.title, mode: '', params: {} },
@@ -54,13 +40,6 @@ function ChatPage() {
   };
 
   const handleEditSession = (id: string, newTitle: string) => {
-    //del
-    setChatSessions((prevSessions) =>
-      prevSessions.map((session) =>
-        session.id === id ? { ...session, title: newTitle } : session
-      )
-    );
-
     setTestChatSessions((prevSessions) =>
       prevSessions.map((session) =>
         session.id === id ? { ...session, title: newTitle } : session
@@ -69,9 +48,6 @@ function ChatPage() {
   };
 
   const handleDeleteSession = (id: string) => {
-    //del
-    setChatSessions((prevSessions) => prevSessions.filter((session) => session.id !== id));
-
     setTestChatSessions((prevSessions) => prevSessions.filter((session) => session.id !== id));
     if (activeSessionId === id) {
       setActiveSessionId(null); 
@@ -90,8 +66,9 @@ function ChatPage() {
       ],
     }));
 
-    const currentMode = sessionModes[activeSessionId] || 'openai';
-    const currentParams = sessionParams[activeSessionId] || {};
+    const currentSession = testChatSessions.find((session) => session.id === activeSessionId);
+    const currentMode = currentSession?.mode || 'openai';
+    const currentParams = currentSession?.params || {};
     const botResponse = await sendMessage({
       mode: currentMode,
       params: currentParams,
@@ -110,11 +87,6 @@ function ChatPage() {
   const handleModeChange = (mode: string) => {
     if (!activeSessionId) return;
 
-    setSessionModes((prevModes) => ({
-      ...prevModes,
-      [activeSessionId]: mode,
-    }));
-
     setTestChatSessions((prevSessions) =>
       prevSessions.map((session) =>
         session.id === activeSessionId ? { ...session, mode } : session
@@ -124,15 +96,7 @@ function ChatPage() {
 
   const handleParamsChange = (params: Record<string, any>) => {
     if (!activeSessionId) return;
-
-    setSessionParams((prevParams) => ({
-      ...prevParams,
-      [activeSessionId]: {
-        ...prevParams[activeSessionId],
-        ...params,
-      },
-    }));
-
+    console.log('params', params);
     setTestChatSessions((prevSessions) =>
       prevSessions.map((session) =>
         session.id === activeSessionId ? { ...session, params } : session
@@ -187,10 +151,7 @@ function ChatPage() {
           onModeChange={handleModeChange}
           onParamsChange={handleParamsChange}
           sessionId={activeSessionId || ''}
-          setChatSessions={setChatSessions}
           setActiveSessionId={setActiveSessionId}
-          setSessionParams={setSessionParams}
-          setSessionModes={setSessionModes}
           testChatSessions={testChatSessions}
           setTestChatSessions={setTestChatSessions}
         />
