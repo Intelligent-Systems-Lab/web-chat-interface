@@ -4,6 +4,7 @@ import SessionSetting, { sessionSettingWidth } from './components/SessionSetting
 import ChatWindow from './components/ChatWindow';
 import { sendMessage } from './utils/sendMessage';
 import { Box } from '@mui/material';
+import api from './api/axios';
 
 export interface ChatSession {
   id: string;
@@ -47,12 +48,17 @@ function ChatPage() {
     );
   };
 
-  const handleDeleteSession = (id: string) => {
-    setTestChatSessions((prevSessions) => prevSessions.filter((session) => session.id !== id));
-    if (activeSessionId === id) {
-      setActiveSessionId(null); 
+  const handleDeleteSession = async (id: string) => {
+    try {
+      await api.delete(`/session-settings/${id}`);
+      
+      setTestChatSessions((prevSessions) => prevSessions.filter((session) => session.id !== id));
+      if (activeSessionId === id) {
+        setActiveSessionId(null); 
+      }
+    } catch (error) {
+      console.error('刪除 session 時發生錯誤:', error);
     }
-    //TODO: api 刪除
   };
 
   const handleSendMessage = async (message: string) => {
@@ -96,7 +102,6 @@ function ChatPage() {
 
   const handleParamsChange = (params: Record<string, any>) => {
     if (!activeSessionId) return;
-    console.log('params', params);
     setTestChatSessions((prevSessions) =>
       prevSessions.map((session) =>
         session.id === activeSessionId ? { ...session, params } : session

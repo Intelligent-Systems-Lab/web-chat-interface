@@ -27,7 +27,6 @@ export async function sendOllamaRequest(params: Record<string, any>, message: st
     if (!response.ok) {
       return `Ollama API 錯誤: ${response.status} ${response.statusText}`;
     }
-    console.log('Ollama API 回應:', response);
     const data = await response.json();
     return data.response || '未找到 response 欄位';
   } catch (err: any) {
