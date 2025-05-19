@@ -36,7 +36,6 @@ function SessionSidebar({
     if (editingSessionId) {
       onEditSession(editingSessionId, newTitle);
       setEditingSessionId(null);
-      setNewTitle('');
     }
   };
 
