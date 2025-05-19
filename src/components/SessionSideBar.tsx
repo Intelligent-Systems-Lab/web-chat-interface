@@ -152,6 +152,25 @@ function SessionSidebar({
           ))}
         </List>
       </Drawer>
+      {!isOpen && (
+        <IconButton
+          onClick={onToggleSidebar}
+          disableRipple
+          sx={{
+            position: 'fixed',
+            top: '16px',
+            left: '16px',
+            color: '#FFFFFF',
+            backgroundColor: '#393B3B',
+            borderRadius: '8px',
+            '&:hover': {
+              backgroundColor: '#505252',
+            },
+          }}
+        >
+          <MenuIcon />
+        </IconButton>
+      )}
     </>
   );
 }
