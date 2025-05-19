@@ -5,7 +5,7 @@ import ChatWindow from './components/ChatWindow';
 import { sendMessage } from './utils/sendMessage';
 import { Box } from '@mui/material';
 
-interface ChatSession {
+export interface ChatSession {
   id: string;
   title: string;
   mode: string;
@@ -114,6 +114,12 @@ function ChatPage() {
       ...prevModes,
       [activeSessionId]: mode,
     }));
+
+    setTestChatSessions((prevSessions) =>
+      prevSessions.map((session) =>
+        session.id === activeSessionId ? { ...session, mode } : session
+      )
+    );
   };
 
   const handleParamsChange = (params: Record<string, any>) => {
@@ -127,9 +133,11 @@ function ChatPage() {
       },
     }));
 
-    if (params.sessionId) {
-      setActiveSessionId(params.sessionId);
-    }
+    setTestChatSessions((prevSessions) =>
+      prevSessions.map((session) =>
+        session.id === activeSessionId ? { ...session, params } : session
+      )
+    );
   };
 
   const sidebarWidth = sessionIsOpen ? sessionSideBarWidth : 0;
@@ -147,7 +155,7 @@ function ChatPage() {
           onSelectSession={setActiveSessionId}
           isOpen={sessionIsOpen}
           onToggleSidebar={handleSessionSidebar}
-          chatSessions={chatSessions} // 改成 testChatSessions
+          chatSessions={testChatSessions}
           onAddSession={handleAddSession}
           onEditSession={handleEditSession}
           onDeleteSession={handleDeleteSession}
@@ -176,19 +184,15 @@ function ChatPage() {
         <SessionSetting
           isOpen={sessionSettingIsOpen}
           onToggleSidebar={handleSessionSetting}
-          mode={activeSessionId ? sessionModes[activeSessionId] || 'openai' : 'openai'}
           onModeChange={handleModeChange}
           onParamsChange={handleParamsChange}
-          params={activeSessionId ? sessionParams[activeSessionId] || {} : {}}
-          sessionId={activeSessionId || ''} 
-          sessionName={
-            activeSessionId 
-              ? chatSessions.find((session) => session.id === activeSessionId)?.title || `Session ${activeSessionId}` 
-              : 'Default Session'}
+          sessionId={activeSessionId || ''}
           setChatSessions={setChatSessions}
           setActiveSessionId={setActiveSessionId}
           setSessionParams={setSessionParams}
           setSessionModes={setSessionModes}
+          testChatSessions={testChatSessions}
+          setTestChatSessions={setTestChatSessions}
         />
       </Box>
 

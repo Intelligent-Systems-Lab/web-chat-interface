@@ -4,46 +4,49 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import BotModeSelector from './session_setting/BotModeSelect';
 import ModeContent from './session_setting/ModeContent';
 import api from '../api/axios';
+import type { ChatSession } from '../App'
 
 export const sessionSettingWidth = 500;
 
 interface SettingProps {
   isOpen: boolean;
   onToggleSidebar: () => void;
-  mode: string;
   onModeChange: (mode: string) => void;
   onParamsChange: (params: Record<string, any>) => void;
-  params: Record<string, any>;
   sessionId: string; 
-  sessionName: string;
   setChatSessions: React.Dispatch<React.SetStateAction<{ id: string; title: string }[]>>;
   setActiveSessionId: (session_id:string) => void;
   setSessionParams: React.Dispatch<React.SetStateAction<Record<string, Record<string, any>>>>;
   setSessionModes: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+  testChatSessions: ChatSession[];
+  setTestChatSessions: React.Dispatch<React.SetStateAction<ChatSession[]>>;
 }
 
 function SessionSetting({
     isOpen, 
     onToggleSidebar, 
-    mode, 
     onModeChange, 
     onParamsChange, 
-    params, 
-    sessionId, 
-    sessionName,
+    sessionId,
     setChatSessions,
     setActiveSessionId,
     setSessionParams,
-    setSessionModes
+    setSessionModes,
+    testChatSessions,
+    setTestChatSessions
   }: SettingProps) {
   
-  const [localMode, setLocalMode] = useState<string>(mode);
-  const [localParams, setLocalParams] = useState<Record<string, any>>(params);
+  const sessionData = testChatSessions.find((session) => session.id === sessionId);
+  const [localTitle, setLocalTitle] = useState<string>(sessionData?.title || '新對話');
+  const [localMode, setLocalMode] = useState<string>(sessionData?.mode || 'openai');
+  const [localParams, setLocalParams] = useState<Record<string, any>>(sessionData?.params || {});
 
   useEffect(() => {
-    setLocalMode(mode);
-    setLocalParams(params);
-  }, [mode, params]);
+    const updatedSessionData = testChatSessions.find((session) => session.id === sessionId);
+    setLocalTitle(updatedSessionData?.title || '新對話');
+    setLocalMode(updatedSessionData?.mode || 'openai');
+    setLocalParams(updatedSessionData?.params || {});
+  }, [sessionId, testChatSessions]);
 
   const replaceSessionId = (oldId: string, newId: string) => {
     setChatSessions((prevSessions) => {
@@ -73,6 +76,14 @@ function SessionSetting({
       }
       return prevModes;
     });
+
+    setTestChatSessions((prevSessions) => {
+      const session = prevSessions.find(s => s.id === oldId);
+      if (session) {
+        session.id = newId;
+      }
+      return [...prevSessions];
+    });
   };
 
   const handleSaveSettings = async () => {
@@ -83,7 +94,7 @@ function SessionSetting({
     try {
       const payload = {
         mode: localMode,
-        name: sessionName,
+        title: localTitle,
         params: localParams,
       };
       const response = await api.post('/session-settings', payload);
