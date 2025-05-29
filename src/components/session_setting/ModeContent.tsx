@@ -13,11 +13,11 @@ function ModeContent({ mode, onParamsChange, params }: ModeContentProps) {
   const renderContent = () => {
     switch (mode) {
       case 'openai':
-        return <OpenAIModeContent onParamsChange={onParamsChange} params={params}/>;
+        return <OpenAIModeContent key={JSON.stringify(params)} onParamsChange={onParamsChange} params={params}/>;
       case 'ollama':
-        return <OllamaModeContent onParamsChange={onParamsChange} params={params}/>;
+        return <OllamaModeContent key={JSON.stringify(params)} onParamsChange={onParamsChange} params={params}/>;
       case 'customize':
-        return <CustomizeModeContent onParamsChange={onParamsChange} params={params}/>;
+        return <CustomizeModeContent key={JSON.stringify(params)} onParamsChange={onParamsChange} params={params}/>;
       
       default:
         return (

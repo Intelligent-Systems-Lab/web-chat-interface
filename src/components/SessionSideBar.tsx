@@ -1,7 +1,7 @@
 import { Drawer, List, ListItem, Box, IconButton } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu'; // 引入 MenuIcon
-import DeleteIcon from '@mui/icons-material/Delete'; // 引入刪除圖示
-import EditIcon from '@mui/icons-material/Edit'; // 引入編輯圖示
+import MenuIcon from '@mui/icons-material/Menu';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import SessionItem from './SessionItem';
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import { useState } from 'react';
