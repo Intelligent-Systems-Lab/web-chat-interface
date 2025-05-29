@@ -13,4 +13,19 @@ const api = axios.create({
   },
 });
 
+api.interceptors.response.use(
+  (response) => {
+    console.log(`URL: ${response.config.url}, Status: ${response.status}`);
+    return response;
+  },
+  (error) => {
+    if (error.response) {
+      console.error(`URL: ${error.response.config.url}, Status: ${error.response.status}`);
+    } else {
+      console.error('Error:', error.message);
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;
