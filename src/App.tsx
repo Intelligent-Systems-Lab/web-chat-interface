@@ -5,6 +5,7 @@ import ChatWindow from './components/ChatWindow';
 import { sendMessage } from './utils/sendMessage';
 import { Box } from '@mui/material';
 import api from './api/axios';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface ChatSession {
   id: string;
@@ -43,7 +44,7 @@ function ChatPage() {
 
   const handleAddSession = () => {
     const newSession = {
-      id: crypto.randomUUID(),
+      id: uuidv4(),
       title: `新對話`,
     };
     setTestChatSessions((prevSessions) => [
