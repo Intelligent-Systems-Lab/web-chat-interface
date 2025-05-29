@@ -14,8 +14,8 @@ interface SettingProps {
   onModeChange: (mode: string) => void;
   onParamsChange: (params: Record<string, any>) => void;
   sessionId: string; 
-  setActiveSessionId: (session_id:string) => void;testChatSessions: ChatSession[];
-  setTestChatSessions: React.Dispatch<React.SetStateAction<ChatSession[]>>;
+  setActiveSessionId: (session_id:string) => void;chatSessions: ChatSession[];
+  setChatSessions: React.Dispatch<React.SetStateAction<ChatSession[]>>;
 }
 
 function SessionSetting({
@@ -25,27 +25,27 @@ function SessionSetting({
     onParamsChange, 
     sessionId,
     setActiveSessionId,
-    testChatSessions,
-    setTestChatSessions
+    chatSessions,
+    setChatSessions
   }: SettingProps) {
   
-  const sessionData = testChatSessions.find((session) => session.id === sessionId);
+  const sessionData = chatSessions.find((session) => session.id === sessionId);
   const [localTitle, setLocalTitle] = useState<string>(sessionData?.title || '新對話');
   const [localMode, setLocalMode] = useState<string>(sessionData?.mode || '');
   const [localParams, setLocalParams] = useState<Record<string, any>>(sessionData?.params || {});
 
   useEffect(() => {
-    const updatedSessionData = testChatSessions.find((session) => session.id === sessionId);
+    const updatedSessionData = chatSessions.find((session) => session.id === sessionId);
     setLocalTitle(updatedSessionData?.title || '新對話');
     setLocalMode(updatedSessionData?.mode || '');
     setLocalParams(updatedSessionData?.params || {});
-  }, [sessionId, testChatSessions]);
+  }, [sessionId, chatSessions]);
 
   const replaceSessionId = (oldId: string, newId: string) => {
     if (oldId === newId) {
       return;
     }
-    setTestChatSessions((prevSessions) => {
+    setChatSessions((prevSessions) => {
       const session = prevSessions.find(s => s.id === oldId);
       if (session) {
         session.id = newId;
@@ -82,7 +82,7 @@ function SessionSetting({
 
   const handleModeChange = (newMode: string) => {
     setLocalMode(newMode);
-    const oldData = testChatSessions.find((session) => session.id === sessionId);
+    const oldData = chatSessions.find((session) => session.id === sessionId);
     if (newMode === oldData?.mode) {
       setLocalParams(oldData.params);
     } else {

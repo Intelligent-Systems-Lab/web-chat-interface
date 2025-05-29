@@ -24,7 +24,7 @@ function CustomizeModeContent({ onParamsChange, params }: CustomizeModeContentPr
   );
   const [customBody, setCustomBody] = useState<KeyValue[]>(
     params.body
-      ? Object.entries(params.body).map(([key, value]) => ({ key, value: String(value) }))
+      ? Object.entries(params.body).map(([key, value]) => ({ key, value: typeof value === 'object' ? JSON.stringify(value) : String(value), }))
       : [{ key: '', value: '' }]
   );
   const [responseFields, setResponseFields] = useState<string[]>(params.responseFields || ['']);

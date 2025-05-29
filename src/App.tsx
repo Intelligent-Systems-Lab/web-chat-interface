@@ -19,13 +19,13 @@ function ChatPage() {
   const [sessionIsOpen, setSessionIsOpen] = useState(true);
   const [sessionMessages, setSessionMessages] = useState<Record<string, { id: number; sender: string; text: string }[]>>({});
   const [sessionSettingIsOpen, setSettingSessionIsOpen] = useState(true);
-  const [testChatSessions, setTestChatSessions] = useState<ChatSession[]>([]);
+  const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
 
   useEffect(() => {
     const fetchChatSessions = async () => {
       try {
         const response = await api.get('/session-settings');
-        setTestChatSessions(response.data);
+        setChatSessions(response.data);
       } catch (error) {
         console.error('載入 session-settings 時發生錯誤:', error);
       }
@@ -47,7 +47,7 @@ function ChatPage() {
       id: uuidv4(),
       title: `新對話`,
     };
-    setTestChatSessions((prevSessions) => [
+    setChatSessions((prevSessions) => [
       ...prevSessions,
       { id: newSession.id, title: newSession.title, mode: '', params: {} },
     ]);
@@ -55,7 +55,7 @@ function ChatPage() {
   };
 
   const handleEditSession = (id: string, newTitle: string) => {
-    setTestChatSessions((prevSessions) =>
+    setChatSessions((prevSessions) =>
       prevSessions.map((session) =>
         session.id === id ? { ...session, title: newTitle } : session
       )
@@ -66,7 +66,7 @@ function ChatPage() {
     try {
       await api.delete(`/session-settings/${id}`);
       
-      setTestChatSessions((prevSessions) => prevSessions.filter((session) => session.id !== id));
+      setChatSessions((prevSessions) => prevSessions.filter((session) => session.id !== id));
       if (activeSessionId === id) {
         setActiveSessionId(null); 
       }
@@ -86,7 +86,7 @@ function ChatPage() {
       ],
     }));
 
-    const currentSession = testChatSessions.find((session) => session.id === activeSessionId);
+    const currentSession = chatSessions.find((session) => session.id === activeSessionId);
     const currentMode = currentSession?.mode || '';
     const currentParams = currentSession?.params || {};
     const botResponse = await sendMessage({
@@ -107,7 +107,7 @@ function ChatPage() {
   const handleModeChange = (mode: string) => {
     if (!activeSessionId) return;
 
-    setTestChatSessions((prevSessions) =>
+    setChatSessions((prevSessions) =>
       prevSessions.map((session) =>
         session.id === activeSessionId ? { ...session, mode } : session
       )
@@ -116,7 +116,7 @@ function ChatPage() {
 
   const handleParamsChange = (params: Record<string, any>) => {
     if (!activeSessionId) return;
-    setTestChatSessions((prevSessions) =>
+    setChatSessions((prevSessions) =>
       prevSessions.map((session) =>
         session.id === activeSessionId ? { ...session, params } : session
       )
@@ -138,7 +138,7 @@ function ChatPage() {
           onSelectSession={setActiveSessionId}
           isOpen={sessionIsOpen}
           onToggleSidebar={handleSessionSidebar}
-          chatSessions={testChatSessions}
+          chatSessions={chatSessions}
           onAddSession={handleAddSession}
           onEditSession={handleEditSession}
           onDeleteSession={handleDeleteSession}
@@ -171,8 +171,8 @@ function ChatPage() {
           onParamsChange={handleParamsChange}
           sessionId={activeSessionId || ''}
           setActiveSessionId={setActiveSessionId}
-          testChatSessions={testChatSessions}
-          setTestChatSessions={setTestChatSessions}
+          chatSessions={chatSessions}
+          setChatSessions={setChatSessions}
         />
       </Box>
 
