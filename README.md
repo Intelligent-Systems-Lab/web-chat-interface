@@ -1,10 +1,16 @@
-<img src="./public/ISL_logo.png" alt="ISL Logo" width="200" />
+<div align="center">
+  <img src="./public/ISL_logo.png" alt="ISL Logo" width="200" />
+</div>
 
 # NYCU Intelligent System Lab Chat Interface
 
 這是一個簡單的聊天介面，設計用於與多種模型進行互動。
 除了與模型聊天外，還可以作為自訂 API 請求產生器，提供一個簡單的互動介面。
 此專案主要是為 NYCU Intelligent System Lab 開發，並且是 open source 。
+
+<div align="center">
+  <img src="./public/example.png" alt="ISL Logo" />
+</div>
 
 ## 技術架構
 
@@ -27,3 +33,8 @@
    使用以下指令啟動專案：
    ```bash
    docker-compose up
+
+## License
+
+本專案採用 [MIT License](./LICENSE)。  
+詳細內容請參閱 `LICENSE` 文件。
