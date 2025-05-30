@@ -2,15 +2,23 @@ import { Box, Typography } from '@mui/material';
 import ChatInput from './ChatInput';
 import HomeImg from './HomeImg';
 
-const marginPercent = '20%';
-
 interface ChatWindowProps {
   sessionId: string | null;
   messages: { id: number; sender: string; text: string }[];
   onSendMessage: (message: string) => void;
+  sessionIsOpen: boolean;
+  sessionSettingIsOpen: boolean;
 }
 
-function ChatWindow({ sessionId, messages, onSendMessage }: ChatWindowProps) {
+function ChatWindow({ sessionId, messages, onSendMessage, sessionIsOpen, sessionSettingIsOpen }: ChatWindowProps) {
+  const marginPercent = (msgSender: string) => {
+    if (msgSender === 'user') {
+      return sessionSettingIsOpen ? '5%' : '15%';
+    } else {
+      return sessionIsOpen ? '5%' : '15%';
+    }
+  };
+  
   const isJson = (str: string) => {
     try {
       const parsed = JSON.parse(str);
@@ -48,12 +56,13 @@ function ChatWindow({ sessionId, messages, onSendMessage }: ChatWindowProps) {
                 borderRadius="8px"
                 maxWidth="35%"
                 alignSelf={msg.sender === 'user' ? 'flex-end' : 'flex-start'}
-                marginLeft={msg.sender === 'user' ? 'auto' : marginPercent}
-                marginRight={msg.sender === 'user' ? marginPercent : 'auto'}
+                marginLeft={msg.sender === 'user' ? 'auto' : marginPercent(msg.sender)}
+                marginRight={msg.sender === 'user' ? marginPercent(msg.sender) : 'auto'}
                 sx={{
                   wordWrap: 'break-word',
                   overflowWrap: 'break-word',
                   whiteSpace: 'pre-wrap',
+                  transition: 'margin 0.3s ease-in-out',
                 }}
               >
                 {isJson(msg.text) ? (

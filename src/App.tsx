@@ -156,6 +156,8 @@ function ChatPage() {
           sessionId={activeSessionId}
           messages={activeSessionId ? sessionMessages[activeSessionId] || [] : []}
           onSendMessage={handleSendMessage}
+          sessionIsOpen={sessionIsOpen}
+          sessionSettingIsOpen={sessionSettingIsOpen}
         />
       </Box>
 
