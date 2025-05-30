@@ -7,17 +7,18 @@ interface ModeContentProps {
   mode: string;
   onParamsChange: (params: Record<string, any>) => void;
   params: Record<string, any>;
+  sessionId: string;
 }
 
-function ModeContent({ mode, onParamsChange, params }: ModeContentProps) {
+function ModeContent({ mode, onParamsChange, params, sessionId }: ModeContentProps) {
   const renderContent = () => {
     switch (mode) {
       case 'openai':
-        return <OpenAIModeContent key={JSON.stringify(params)} onParamsChange={onParamsChange} params={params}/>;
+        return <OpenAIModeContent onParamsChange={onParamsChange} params={params} sessionId={sessionId}/>;
       case 'ollama':
-        return <OllamaModeContent key={JSON.stringify(params)} onParamsChange={onParamsChange} params={params}/>;
+        return <OllamaModeContent onParamsChange={onParamsChange} params={params} sessionId={sessionId}/>;
       case 'customize':
-        return <CustomizeModeContent key={JSON.stringify(params)} onParamsChange={onParamsChange} params={params}/>;
+        return <CustomizeModeContent onParamsChange={onParamsChange} params={params} sessionId={sessionId}/>;
       
       default:
         return (

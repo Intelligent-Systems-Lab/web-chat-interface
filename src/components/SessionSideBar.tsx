@@ -90,7 +90,7 @@ function SessionSidebar({
           </IconButton>
         </Box>
 
-        <List>
+        <List sx={{ flexGrow: 1 }}>
           {chatSessions.map((s) => (
             <ListItem
               key={s.id}
@@ -151,6 +151,18 @@ function SessionSidebar({
             </ListItem>
           ))}
         </List>
+        {/* 新增文字區塊 */}
+        <Box
+          sx={{
+            padding: '16px',
+            textAlign: 'center',
+            color: '#FFFFFF',
+            fontSize: '14px',
+            borderTop: '0.5px solid #737576',
+          }}
+        >
+          目前在測試開發中，有可能會不穩定
+        </Box>
       </Drawer>
       {!isOpen && (
         <IconButton

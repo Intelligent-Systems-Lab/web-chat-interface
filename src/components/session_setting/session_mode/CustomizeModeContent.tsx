@@ -11,9 +11,11 @@ interface KeyValue {
 interface CustomizeModeContentProps {
   onParamsChange: (params: Record<string, any>) => void;
   params: Record<string, any>;
+  sessionId: string;
 }
 
-function CustomizeModeContent({ onParamsChange, params }: CustomizeModeContentProps) {
+function CustomizeModeContent({ onParamsChange, params, sessionId }: CustomizeModeContentProps) {
+  const [localId, setLocalId] = useState(sessionId || '');
   const [method, setMethod] = useState(params.method || 'GET');
   const [url, setUrl] = useState(params.url || '');
   const [apiKey, setApiKey] = useState(params.apiKey || '');
@@ -52,6 +54,31 @@ function CustomizeModeContent({ onParamsChange, params }: CustomizeModeContentPr
       responseFields: filteredResponseFields,
     });
   }, [method, url, apiKey, queryParams, customBody, responseFields]);
+
+  // 這段 useEffect 用來處理切換到不同 session 但是 mode 相同時，切換的 setting 不會正確顯示的 bug
+  // 希望有大神能處理這個
+  useEffect(() => {
+      if (sessionId !== localId) {
+        setMethod(params.method || 'GET');
+        setUrl(params.url || '');
+        setApiKey(params.apiKey || '');
+        setQueryParams(
+          params.query_params
+            ? Object.entries(params.query_params).map(([key, value]) => ({ key, value: String(value) }))
+            : [{ key: '', value: '' }]
+        );
+        setCustomBody(
+          params.body
+            ? Object.entries(params.body).map(([key, value]) => ({
+                key,
+                value: typeof value === 'object' ? JSON.stringify(value) : String(value),
+              }))
+            : [{ key: '', value: '' }]
+        );
+        setResponseFields(params.responseFields || ['']);
+        setLocalId(sessionId);
+      }
+    }, [params]);
 
   const handleQueryParamsChange = (idx: number, field: 'key' | 'value', val: string) => {
     setQueryParams((prev) =>

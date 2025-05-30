@@ -4,9 +4,11 @@ import { useState, useEffect } from 'react';
 interface OpenAIModeContentProps {
   onParamsChange: (params: Record<string, any>) => void;
   params: Record<string, any>;
+  sessionId: string;
 }
 
-function OpenAIModeContent({ onParamsChange, params }: OpenAIModeContentProps) {
+function OpenAIModeContent({ onParamsChange, params, sessionId }: OpenAIModeContentProps) {
+  const [localId, setLocalId] = useState(sessionId || '');
   const [apiKey, setApiKey] = useState(params.apiKey || '');
   const [model, setModel] = useState(params.model || 'gpt-4o-mini');
   const [prompt, setPrompt] = useState(params.prompt || '');
@@ -14,6 +16,17 @@ function OpenAIModeContent({ onParamsChange, params }: OpenAIModeContentProps) {
   useEffect(() => {
     onParamsChange({ ...params, apiKey, model, prompt });
   }, [apiKey, model, prompt]);
+
+  // 這段 useEffect 用來處理切換到不同 session 但是 mode 相同時，切換的 setting 不會正確顯示的 bug
+  // 希望有大神能處理這個
+  useEffect(() => {
+    if (sessionId !== localId) {
+      setApiKey(params.apiKey || '');
+      setModel(params.model || 'gpt-4o-mini');
+      setPrompt(params.prompt || '');
+      setLocalId(sessionId);
+    }
+  }, [params]);
 
   return (
     <Box>

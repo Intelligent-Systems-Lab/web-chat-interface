@@ -143,6 +143,7 @@ function SessionSetting({
           mode={localMode}
           onParamsChange={setLocalParams}
           params={localParams}
+          sessionId={sessionId}
         />
         <Box
           sx={{
