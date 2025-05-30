@@ -161,7 +161,8 @@ function SessionSidebar({
             borderTop: '0.5px solid #737576',
           }}
         >
-          目前在測試開發中，有可能會不穩定
+          目前測試開發中，有可能會不穩定
+          v1.0.0
         </Box>
       </Drawer>
       {!isOpen && (

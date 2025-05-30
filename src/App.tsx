@@ -18,7 +18,7 @@ function ChatPage() {
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [sessionIsOpen, setSessionIsOpen] = useState(true);
   const [sessionMessages, setSessionMessages] = useState<Record<string, { id: number; sender: string; text: string }[]>>({});
-  const [sessionSettingIsOpen, setSettingSessionIsOpen] = useState(true);
+  const [sessionSettingIsOpen, setSettingSessionIsOpen] = useState(false);
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
 
   useEffect(() => {
