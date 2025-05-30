@@ -1,0 +1,17 @@
+.scrollable {
+  overflow-y: auto; /* 啟用垂直滾動 */
+  max-height: 100%;
+}
+
+.scrollable::-webkit-scrollbar {
+  width: 3px; /* 滾動條寬度 */
+}
+
+.scrollable::-webkit-scrollbar-thumb {
+  background-color: #555; /* 滾動條顏色 */
+  border-radius: 4px; /* 滾動條圓角 */
+}
+
+.scrollable::-webkit-scrollbar-track {
+  background-color: #333; /* 滾動條軌道顏色 */
+}

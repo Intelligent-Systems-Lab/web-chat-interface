@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Drawer, List, Box, IconButton, Button } from '@mui/material';
+import HelpIcon from '@mui/icons-material/Help';
 import SettingsIcon from '@mui/icons-material/Settings';
 import BotModeSelector from './session_setting/BotModeSelect';
 import ModeContent from './session_setting/ModeContent';
+import OperationManual from './session_setting/OperationManual';
 import api from '../api/axios';
 import type { ChatSession } from '../App'
 
@@ -33,6 +35,12 @@ function SessionSetting({
   const [localTitle, setLocalTitle] = useState<string>(sessionData?.title || '新對話');
   const [localMode, setLocalMode] = useState<string>(sessionData?.mode || '');
   const [localParams, setLocalParams] = useState<Record<string, any>>(sessionData?.params || {});
+
+  const [operationManualOpen, setOperationManualOpen] = useState(false);
+
+  const handleOperationManualToggle = () => {
+    setOperationManualOpen((prev) => !prev);
+  };
 
   useEffect(() => {
     const updatedSessionData = chatSessions.find((session) => session.id === sessionId);
@@ -119,6 +127,21 @@ function SessionSetting({
           }}
         >
           <IconButton
+            onClick={handleOperationManualToggle}
+            disableRipple
+            sx={{
+              color: '#FFFFFF',
+              backgroundColor: '#393B3B',
+              borderRadius: '8px',
+              '&:hover': {
+                backgroundColor: '#505252',
+              },
+            }}
+          >
+            <HelpIcon />
+          </IconButton>
+
+          <IconButton
             onClick={onToggleSidebar}
             disableRipple
             sx={{
@@ -188,6 +211,9 @@ function SessionSetting({
           <SettingsIcon />
         </IconButton>
       )}
+      
+      {/* 操作手冊對話框 */}
+      <OperationManual open={operationManualOpen} onClose={handleOperationManualToggle} />
     </>
   );
 }
